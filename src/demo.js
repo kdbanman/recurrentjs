@@ -52,7 +52,7 @@ var initVocab = function (sents, count_threshold) {
   input_size = vocab.length + 1;
   output_size = vocab.length + 1;
   epoch_size = sents.length;
-  $("#prepro_status").text('found ' + vocab.length + ' distinct characters: ' + vocab.join(''));
+  $("#preprocessing_results").text('found ' + vocab.length + ' distinct characters: ' + vocab.join(''));
 }
 
 var utilAddToModel = function (modelto, modelfrom) {
