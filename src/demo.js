@@ -7,52 +7,47 @@ var maxGenerationLength = 100; // max length of generated sentences
 var epochSize = -1;
 var inputSize = -1;
 var outputSize = -1;
-var letterToIndex = {};
-var indexToLetter = {};
+var characterToIndex = {};
+var indexToCharacter = {};
 var vocabulary = [];
-var training_data_lines = [];
+var trainingDataLines = [];
 var solver = new R.Solver();
 var perplexityGraph = new Rvis.Graph();
 
 var model = {};
 
-var initializeVocabulary = function (sents, count_threshold) {
+var initializeVocabulary = function (trainingDataString) {
   // go over all characters and keep track of all unique ones seen
-  var txt = sents.join(''); // concat all
 
-  // count up all characters
-  var d = {};
-  for(var i=0,n=txt.length;i<n;i++) {
-    var txti = txt[i];
-    if(txti in d) { d[txti] += 1; }
-    else { d[txti] = 1; }
+  var characters = {};
+  for (var i = 0; i < trainingDataString.length; i++) {
+    var character = trainingDataString[i];
+    if (!(character in characters)) {
+      characters[character] = true;
+    }
   }
 
-  // filter by count threshold and create pointers
-  letterToIndex = {};
-  indexToLetter = {};
+  characterToIndex = {};
+  indexToCharacter = {};
   vocabulary = [];
   // NOTE: start at one because we will have START and END tokens!
   // that is, START token will be index 0 in model letter vectors
   // and END token will be index 0 in the next character softmax
-  var q = 1;
-  for(ch in d) {
-    if(d.hasOwnProperty(ch)) {
-      if(d[ch] >= count_threshold) {
-        // add character to vocabulary
-        letterToIndex[ch] = q;
-        indexToLetter[q] = ch;
-        vocabulary.push(ch);
-        q++;
-      }
+  var characterIndex = 1;
+  for (character in characters) {
+    if (characters.hasOwnProperty(character)) {
+      // add character to vocabulary
+      characterToIndex[character] = characterIndex;
+      indexToCharacter[characterIndex] = character;
+      vocabulary.push(character);
+      characterIndex++;
     }
   }
 
-  // globals written: indexToLetter, letterToIndex, vocabulary (list), and:
+  // globals written: indexToCharacter, characterToIndex, vocabulary (list), and:
   inputSize = vocabulary.length + 1;
   outputSize = vocabulary.length + 1;
-  epochSize = sents.length;
-  $("#preprocessing_results").text('found ' + vocabulary.length + ' distinct characters: ' + vocabulary.join(''));
+  $("#preprocessing_results").text('' + vocabulary.length + ' distinct characters: ' + vocabulary.join(''));
 }
 
 var utilAddToModel = function (modelto, modelfrom) {
@@ -111,16 +106,17 @@ var reinit = function () {
   tick_iter = 0;
 
   // process the input, filter out blanks
-  var training_data_lines_raw = $('#training_data').val().split('\n');
-  training_data_lines = [];
-  for(var i=0;i<training_data_lines_raw.length;i++) {
-    var sent = training_data_lines_raw[i].trim();
+  var trainingDataLines_raw = $('#training_data').val().split('\n');
+  trainingDataLines = [];
+  for(var i=0;i<trainingDataLines_raw.length;i++) {
+    var sent = trainingDataLines_raw[i].trim();
     if(sent.length > 0) {
-      training_data_lines.push(sent);
+      trainingDataLines.push(sent);
     }
   }
 
-  initializeVocabulary(training_data_lines, 1); // takes count threshold for characters
+  epochSize = trainingDataLines.length;
+  initializeVocabulary(trainingDataLines.join(''));
   model = initModel();
 }
 
@@ -145,7 +141,7 @@ var predictSentence = function (model, samplei, temperature) {
   while(true) {
 
     // RNN tick
-    var ix = s.length === 0 ? 0 : letterToIndex[s[s.length-1]];
+    var ix = s.length === 0 ? 0 : characterToIndex[s[s.length-1]];
     var lh = forwardIndex(G, model, ix, prev);
     prev = lh;
 
@@ -171,7 +167,7 @@ var predictSentence = function (model, samplei, temperature) {
     if(ix === 0) break; // END token predicted, break out
     if(s.length > maxGenerationLength) { break; } // something is wrong
 
-    var letter = indexToLetter[ix];
+    var letter = indexToCharacter[ix];
     s += letter;
   }
   return s;
@@ -188,8 +184,8 @@ var costfun = function (model, sent) {
   var prev = {};
   for(var i=-1;i<n;i++) {
     // start and end tokens are zeros
-    var ix_source = i === -1 ? 0 : letterToIndex[sent[i]]; // first step: start with START token
-    var ix_target = i === n-1 ? 0 : letterToIndex[sent[i+1]]; // last step: end with END token
+    var ix_source = i === -1 ? 0 : characterToIndex[sent[i]]; // first step: start with START token
+    var ix_target = i === n-1 ? 0 : characterToIndex[sent[i+1]]; // last step: end with END token
 
     lh = forwardIndex(G, model, ix_source, prev);
     prev = lh;
@@ -229,8 +225,8 @@ var tick_iter = 0;
 var tick = function () {
 
   // sample sentence fromd data
-  var sentix = R.randi(0,training_data_lines.length);
-  var sent = training_data_lines[sentix];
+  var sentix = R.randi(0,trainingDataLines.length);
+  var sent = trainingDataLines[sentix];
 
   var t0 = +new Date();  // log start timestamp
 
