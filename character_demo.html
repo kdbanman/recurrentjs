@@ -15,9 +15,9 @@
 
 <body>
 
-<div id="wrap">
+<div id="container">
   <h1>RNN MRI</h1>
-  <div id="intro">
+  <div id="about">
     This uses <a href="https://github.com/karpathy/recurrentjs">recurrentjs</a> to visualize the internal dynamics of a character-lever Recurrent Neural Network (RNN) during training, prediction, and generation.
     See <a>Andrej Karpathy's wonderful article on character-level RNNs</a> to learn more about the network you see visualized.<br><br>
 
@@ -25,11 +25,11 @@
   </div>
 
   <div>Training controls:</div>
-  <button id="reinitialize_weights">reinitialize</button>
-  <button id="train_once">train once</button>
-  <button id="train_continuously">train continuously</button>
-  <button id="pause_training">pause</button>
-  <textarea id="newnet" style="width:100%; height:200px;">
+  <button id="js-reinitialize_weights">reinitialize</button>
+  <button id="js-train_once">train once</button>
+  <button id="js-train_continuously">train continuously</button>
+  <button id="js-pause_training">pause</button>
+  <textarea id="js-initialization_code" style="width:100%; height:200px;">
 
 // model parameters
 generator = 'rnn'; // can be 'rnn' or 'lstm'
@@ -41,54 +41,46 @@ regc = 0.000001; // L2 regularization strength
 learning_rate = 0.001;
 clipval = 5.0; // clip gradients at this value
   </textarea><br />
-  <div id="status">
-
-    <div>
-      <div>Training stats:</div>
-      <div>
-        <div>Learning rate:</div>
-        <div id="lr_slider"></div>
-        <div id="lr_text"></div>
-      </div>
-
-      <canvas id="pplgraph"></canvas>
-      <div id="ticktime"></div>
-      <div id="gradclip"></div>
-      <div id="epoch"></div>
-      <div id="ppl"></div>
-
-      <div style="clear:both;"></div>
-    </div>
-
-    <div>Model generation:</div>
-    <div id="controls">
-        <div>
-          <div>Softmax sample temperature: lower temperatures generate more likely predictions, which are probably boring.  Higher temperatures generate less likely predictions, which might be more exciting but also more error prone.</div>
-          <div id="temperature_slider"></div>
-          <div id="temperature_text"></div>
-          <button id="sample_network">sample network</button>
-        </div>
-    </div>
-    <div id="samples">
-      <div class="generated_sample"></div>
-      <div class="generated_sample"></div>
-      <div class="generated_sample"></div>
-      <div class="generated_sample"></div>
-      <div class="generated_sample"></div>
-    </div>
-    <div>Greedy argmax prediction:</div>
-    <div id="argmax">
-      <div class="generated_sample"></div>
-      <div class="generated_sample"></div>
-      <div class="generated_sample"></div>
-      <div class="generated_sample"></div>
-      <div class="generated_sample"></div>
-    </div>
-  </div>
 
   <div>
-    <div>Training data:</div>
-    <textarea style="width:100%; height:200px;" id="ti">
+    <div>Training stats:</div>
+    <div>
+      <div>Learning rate:</div>
+      <div id="learning_rate_slider"></div>
+      <div id="learning_rate_slider_value"></div>
+    </div>
+
+    <canvas id="perplexity_graph"></canvas>
+    <div id="time_per_tick"></div>
+    <div id="epoch"></div>
+    <div id="last_tick_perplexity"></div>
+  </div>
+
+  <div>Model generation:</div>
+    <div>
+      <div>Softmax sample temperature: lower temperatures generate more likely predictions, which are probably boring.  Higher temperatures generate less likely predictions, which might be more exciting but also more error prone.</div>
+      <div id="temperature_slider"></div>
+      <div id="temperature_text"></div>
+      <button id="sample_network">sample network</button>
+    </div>
+  <div id="hot_samples">
+    <div class="generated_sample"></div>
+    <div class="generated_sample"></div>
+    <div class="generated_sample"></div>
+    <div class="generated_sample"></div>
+    <div class="generated_sample"></div>
+  </div>
+  <div>Greedy argmax prediction:</div>
+  <div id="argmax_samples">
+    <div class="generated_sample"></div>
+    <div class="generated_sample"></div>
+    <div class="generated_sample"></div>
+    <div class="generated_sample"></div>
+    <div class="generated_sample"></div>
+  </div>
+
+  <div>Training data:</div>
+  <textarea style="width:100%; height:200px;" id="training_data">
 https://i.stack.imgur.com/PObJM.png
 https://www.stackoverflowbusiness.com/hubfs/B2B-SO/images/SO_Talent.svg
 https://graph.facebook.com/10206321848364491/picture
@@ -678,8 +670,7 @@ https://graph.facebook.com/10206596598868474/picture
 https://i.stack.imgur.com/D4tIX.jpg
 https://www.stackoverflowbusiness.com/hubfs/B2B-SO/images/home/Understand.svg
 https://www.stackoverflowbusiness.com/hubfs/images/media_kit/samsung.svg
-    </textarea>
-  </div>
+  </textarea>
   <div id="preprocessing_results"></div>
 </div>
 

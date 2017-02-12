@@ -12,7 +12,7 @@ var indexToLetter = {};
 var vocab = [];
 var data_sents = [];
 var solver = new R.Solver(); // should be class because it needs memory for step caches
-var pplGraph = new Rvis.Graph();
+var perplexityGraph = new Rvis.Graph();
 
 var model = {};
 
@@ -83,35 +83,35 @@ var initModel = function () {
 var reinit_learning_rate_slider = function () {
   // init learning rate slider for controlling the decay
   // note that learning_rate is a global variable
-  $("#lr_slider").slider({
+  $("#learning_rate_slider").slider({
     min: Math.log10(0.01) - 3.0,
     max: Math.log10(0.01) + 0.05,
     step: 0.05,
     value: Math.log10(learning_rate),
     slide: function (_, ui) {
       learning_rate = Math.pow(10, ui.value);
-      $("#lr_text").text(learning_rate.toFixed(5));
+      $("#learning_rate_slider_value").text(learning_rate.toFixed(5));
     }
   });
-  $("#lr_text").text(learning_rate.toFixed(5));
+  $("#learning_rate_slider_value").text(learning_rate.toFixed(5));
 }
 
 var reinit = function () {
   // note: reinit writes global vars
 
   // eval options to set some globals
-  eval($("#newnet").val());
+  eval($("#js-initialization_code").val());
 
   reinit_learning_rate_slider();
 
   solver = new R.Solver(); // reinit solver
-  pplGraph = new Rvis.Graph();
+  perplexityGraph = new Rvis.Graph();
 
-  ppl_list = [];
+  perplexity_list = [];
   tick_iter = 0;
 
   // process the input, filter out blanks
-  var data_sents_raw = $('#ti').val().split('\n');
+  var data_sents_raw = $('#training_data').val().split('\n');
   data_sents = [];
   for(var i=0;i<data_sents_raw.length;i++) {
     var sent = data_sents_raw[i].trim();
@@ -183,7 +183,7 @@ var costfun = function (model, sent) {
   // object which can be used to do backprop
   var n = sent.length;
   var G = new R.Graph();
-  var log2ppl = 0.0;
+  var log2perplexity = 0.0;
   var cost = 0.0;
   var prev = {};
   for(var i=-1;i<n;i++) {
@@ -198,15 +198,15 @@ var costfun = function (model, sent) {
     logprobs = lh.o; // interpret output as logprobs
     probs = R.softmax(logprobs); // compute the softmax probabilities
 
-    log2ppl += -Math.log2(probs.w[ix_target]); // accumulate base 2 log prob and do smoothing
+    log2perplexity += -Math.log2(probs.w[ix_target]); // accumulate base 2 log prob and do smoothing
     cost += -Math.log(probs.w[ix_target]);
 
     // write gradients into log probabilities
     logprobs.dw = probs.w;
     logprobs.dw[ix_target] -= 1
   }
-  var ppl = Math.pow(2, log2ppl / (n - 1));
-  return {'G':G, 'ppl':ppl, 'cost':cost};
+  var perplexity = Math.pow(2, log2perplexity / (n - 1));
+  return {'G':G, 'perplexity':perplexity, 'cost':cost};
 }
 
 var median = function (values) {
@@ -224,7 +224,7 @@ var sampleNetworkGreedy = function () {
   return predictSentence(model, false);
 }
 
-var ppl_list = [];
+var perplexity_list = [];
 var tick_iter = 0;
 var tick = function () {
 
@@ -245,21 +245,21 @@ var tick = function () {
   var t1 = +new Date();
   var tick_time = t1 - t0;
 
-  ppl_list.push(cost_struct.ppl); // keep track of perplexity
+  perplexity_list.push(cost_struct.perplexity); // keep track of perplexity
 
   // evaluate now and then
   tick_iter += 1;
   if(tick_iter % 10 === 0) {
     // keep track of perplexity
     $('#epoch').text('epoch: ' + (tick_iter/epoch_size).toFixed(2));
-    $('#ppl').text('perplexity: ' + cost_struct.ppl.toFixed(2));
-    $('#ticktime').text('forw/bwd time per example: ' + tick_time.toFixed(1) + 'ms');
+    $('#last_tick_perplexity').text('perplexity: ' + cost_struct.perplexity.toFixed(2));
+    $('#time_per_tick').text('forw/bwd time per example: ' + tick_time.toFixed(1) + 'ms');
 
     if(tick_iter % 100 === 0) {
-      var median_ppl = median(ppl_list);
-      ppl_list = [];
-      pplGraph.add(tick_iter, median_ppl);
-      pplGraph.drawSelf(document.getElementById("pplgraph"));
+      var median_perplexity = median(perplexity_list);
+      perplexity_list = [];
+      perplexityGraph.add(tick_iter, median_perplexity);
+      perplexityGraph.drawSelf(document.getElementById("perplexity_graph"));
     }
   }
 }

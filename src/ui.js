@@ -18,17 +18,17 @@ $(function () {
     learnIntervalId = null;
   };
 
-  $('#reinitialize_weights').click(function () {
+  $('#js-reinitialize_weights').click(function () {
     stopLearning();
     reinit();
   });
-  $('#train_once').click(function () {
+  $('#js-train_once').click(function () {
     tick();
   });
-  $('#pause_training').click(function () {
+  $('#js-pause_training').click(function () {
     stopLearning();
   });
-  $("#train_continuously").click(function () {
+  $("#js-train_continuously").click(function () {
     startLearning();
   });
 
@@ -36,15 +36,15 @@ $(function () {
     var shouldRestart = isLearning();
     stopLearning();
 
-    $('#samples .generated_sample').last().remove();
+    $('#hot_samples .generated_sample').last().remove();
     var pred = sampleNetwork();
     var pred_div = '<div class="generated_sample">'+pred+'</div>'
-    $('#samples').prepend(pred_div);
+    $('#hot_samples').prepend(pred_div);
 
-    $('#argmax .generated_sample').last().remove();
+    $('#argmax_samples .generated_sample').last().remove();
     var argmax_pred = sampleNetworkGreedy();
     var argmax_pred_div = '<div class="generated_sample">'+argmax_pred+'</div>'
-    $('#argmax').prepend(argmax_pred_div);
+    $('#argmax_samples').prepend(argmax_pred_div);
 
     if (shouldRestart) {
       startLearning();
