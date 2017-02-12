@@ -19,7 +19,7 @@
 <div id="wrap">
   <h1>RNN MRI</h1>
   <div id="intro">
-    This uses the <a href="https://github.com/karpathy/recurrentjs">recurrentjs library</a> to visualize the internal dynamics of a character-lever Recurrent Neural Network (RNN) during training, prediction, and generation.
+    This uses <a href="https://github.com/karpathy/recurrentjs">recurrentjs</a> to visualize the internal dynamics of a character-lever Recurrent Neural Network (RNN) during training, prediction, and generation.
     See <a>Andrej Karpathy's wonderful article on character-level RNNs</a> to learn more about the network you see visualized.<br><br>
 
     The demo is pre-filled with URLs that point to images, as scraped from some StackOverflow pages.  Fill it with different data and retrain if you wish.<br><br>
@@ -33,13 +33,13 @@
   <textarea id="newnet" style="width:100%; height:200px;">
 
 // model parameters
-generator = 'lstm'; // can be 'rnn' or 'lstm'
-hidden_sizes = [20,20]; // list of sizes of hidden layers
+generator = 'rnn'; // can be 'rnn' or 'lstm'
+hidden_sizes = [20, 20]; // list of sizes of hidden layers
 letter_size = 5; // size of letter embeddings
 
 // optimization
 regc = 0.000001; // L2 regularization strength
-learning_rate = 0.01; // learning rate
+learning_rate = 0.01;
 clipval = 5.0; // clip gradients at this value
   </textarea><br />
   <div id="status">
