@@ -1,20 +1,34 @@
 var learnIntervalId = null;
 $(function() {
 
-  // attach button handlers
-  $('#learn').click(function(){
-    reinit();
-    if(learnIntervalId !== null) { clearInterval(learnIntervalId); }
-    learnIntervalId = setInterval(tick, 0);
-  });
-  $('#stop').click(function(){
-    if(learnIntervalId !== null) { clearInterval(learnIntervalId); }
-    learnIntervalId = null;
-  });
-  $("#resume").click(function(){
-    if(learnIntervalId === null) {
+  var isLearning = function () {
+    return learnIntervalId != null;
+  };
+
+  var startLearning = function () {
+    if(!isLearning()) {
       learnIntervalId = setInterval(tick, 0);
     }
+  };
+
+  var stopLearning = function () {
+    if(isLearning()) { clearInterval(learnIntervalId); }
+    learnIntervalId = null;
+  };
+
+  // attach button handlers
+  $('#learn').click(function(){
+    stopLearning();
+    reinit();
+  });
+  $('#step').click(function() {
+    tick();
+  });
+  $('#stop').click(function(){
+    stopLearning();
+  });
+  $("#resume").click(function(){
+    startLearning();
   });
 
   $("#savemodel").click(saveModel);
@@ -32,9 +46,19 @@ $(function() {
     });
   });
 
-  $("#learn").click(); // simulate click on startup
+  $("#sample_network").click(function(){
+    var shouldRestart = isLearning();
+    stopLearning();
 
-  //$('#gradcheck').click(gradCheck);
+    $('#samples .apred').last().remove()
+    var pred = sampleNetwork();
+    var pred_div = '<div class="apred">'+pred+'</div>'
+    $('#samples').prepend(pred_div);
+
+    if (shouldRestart) {
+      startLearning();
+    }
+  });
 
   $("#temperature_slider").slider({
     min: -1,
@@ -46,4 +70,8 @@ $(function() {
       $("#temperature_text").text( sample_softmax_temperature.toFixed(2) );
     }
   });
+
+  // MAIN ENTRY POINT
+  // Initialize the network
+  reinit();
 });

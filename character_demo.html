@@ -632,10 +632,10 @@ https://www.stackoverflowbusiness.com/hubfs/images/media_kit/samsung.svg
   <div id="prepro_status"></div>
 
   <div class="hh">Controls/Options:</div>
-  <button id="learn" class="abutton">learn/restart</button>
-  <button id="resume" class="abutton">resume</button>
+  <button id="learn" class="abutton">reinitialize</button>
+  <button id="step" class="abutton">train once</button>
+  <button id="resume" class="abutton">train continuously</button>
   <button id="stop" class="abutton">pause</button>
-  <!-- <button id="gradcheck">gradcheck</button> -->
   <textarea id="newnet" style="width:100%; height:200px;">
 
 // model parameters
@@ -671,13 +671,24 @@ clipval = 5.0; // clip gradients at this value
 
     <div class="hh">Model samples:</div>
     <div id="controls">
-      <div class="aslider">
-        <div class="slider_header">Softmax sample temperature: lower setting will generate more likely predictions, but you'll see more of the same common words again and again. Higher setting will generate less frequent words but you might see more spelling errors.</div>
-        <div class="theslider" id="temperature_slider"></div>
-        <div class="slider_value" id="temperature_text"></div>
-      </div>
+        <div class="aslider">
+          <div class="slider_header">Softmax sample temperature: lower setting will generate more likely predictions, but you'll see more of the same common words again and again. Higher setting will generate less frequent words but you might see more spelling errors.</div>
+          <span>
+            <button id="sample_network" class="abutton">sample network</button>
+          </span>
+          <span>
+            <div class="theslider" id="temperature_slider"></div>
+            <div class="slider_value" id="temperature_text"></div>
+          </span>
+        </div>
     </div>
-    <div id="samples"></div>
+    <div id="samples">
+      <div class="apred"></div>
+      <div class="apred"></div>
+      <div class="apred"></div>
+      <div class="apred"></div>
+      <div class="apred"></div>
+    </div>
     <div class="hh">Greedy argmax prediction:</div>
     <div id="argmax"></div>
   </div>

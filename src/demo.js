@@ -270,11 +270,15 @@ var costfun = function(model, sent) {
   return {'G':G, 'ppl':ppl, 'cost':cost};
 }
 
-function median(values) {
+var median = function(values) {
   values.sort( function(a,b) {return a - b;} );
   var half = Math.floor(values.length/2);
   if(values.length % 2) return values[half];
   else return (values[half-1] + values[half]) / 2.0;
+}
+
+var sampleNetwork = function () {
+  return predictSentence(model, true, sample_softmax_temperature);
 }
 
 var ppl_list = [];
@@ -303,15 +307,6 @@ var tick = function() {
 
   // evaluate now and then
   tick_iter += 1;
-  if(tick_iter % 50 === 0) {
-    // draw samples
-    $('#samples').html('');
-    for(var q=0;q<5;q++) {
-      var pred = predictSentence(model, true, sample_softmax_temperature);
-      var pred_div = '<div class="apred">'+pred+'</div>'
-      $('#samples').append(pred_div);
-    }
-  }
   if(tick_iter % 10 === 0) {
     // draw argmax prediction
     $('#argmax').html('');
