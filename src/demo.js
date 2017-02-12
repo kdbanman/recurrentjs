@@ -220,6 +220,10 @@ var sampleNetwork = function () {
   return predictSentence(model, true, sample_softmax_temperature);
 }
 
+var sampleNetworkGreedy = function () {
+  return predictSentence(model, false);
+}
+
 var ppl_list = [];
 var tick_iter = 0;
 var tick = function() {
@@ -247,12 +251,6 @@ var tick = function() {
   // evaluate now and then
   tick_iter += 1;
   if(tick_iter % 10 === 0) {
-    // draw argmax prediction
-    $('#argmax').html('');
-    var pred = predictSentence(model, false);
-    var pred_div = '<div class="apred">'+pred+'</div>'
-    $('#argmax').append(pred_div);
-
     // keep track of perplexity
     $('#epoch').text('epoch: ' + (tick_iter/epoch_size).toFixed(2));
     $('#ppl').text('perplexity: ' + cost_struct.ppl.toFixed(2));

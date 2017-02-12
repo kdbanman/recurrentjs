@@ -35,10 +35,15 @@ $(function() {
     var shouldRestart = isLearning();
     stopLearning();
 
-    $('#samples .apred').last().remove()
+    $('#samples .apred').last().remove();
     var pred = sampleNetwork();
     var pred_div = '<div class="apred">'+pred+'</div>'
     $('#samples').prepend(pred_div);
+
+    $('#argmax .apred').last().remove();
+    var argmax_pred = sampleNetworkGreedy();
+    var argmax_pred_div = '<div class="apred">'+argmax_pred+'</div>'
+    $('#argmax').prepend(argmax_pred_div);
 
     if (shouldRestart) {
       startLearning();
