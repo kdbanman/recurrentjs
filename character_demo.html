@@ -25,7 +25,7 @@
     The demo is pre-filled with URLs that point to images, as scraped from some StackOverflow pages.  Fill it with different data and retrain if you wish.<br><br>
   </div>
 
-  <div class="hh">Controls:</div>
+  <div class="hh">Training controls:</div>
   <button id="reinitialize_weights" class="abutton">reinitialize</button>
   <button id="train_once" class="abutton">train once</button>
   <button id="train_continuously" class="abutton">train continuously</button>
@@ -61,7 +61,7 @@ clipval = 5.0; // clip gradients at this value
       <div style="clear:both;"></div>
     </div>
 
-    <div class="hh">Model samples:</div>
+    <div class="hh">Model generation:</div>
     <div id="controls">
         <div class="aslider">
           <div class="slider_header">Softmax sample temperature: lower temperatures generate more likely predictions, which are probably boring.  Higher temperatures generate less likely predictions, which might be more exciting but also more error prone.</div>
@@ -88,7 +88,7 @@ clipval = 5.0; // clip gradients at this value
   </div>
 
   <div>
-    <div class="hh">Training Data:</div>
+    <div class="hh">Training data:</div>
     <textarea style="width:100%; height:200px;" id="ti">
 https://i.stack.imgur.com/PObJM.png
 https://www.stackoverflowbusiness.com/hubfs/B2B-SO/images/SO_Talent.svg
