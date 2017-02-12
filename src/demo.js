@@ -241,7 +241,6 @@ var tick = function() {
   cost_struct.G.backward();
   // perform param update
   var solver_stats = solver.step(model, learning_rate, regc, clipval);
-  //$("#gradclip").text('grad clipped ratio: ' + solver_stats.ratio_clipped)
 
   var t1 = +new Date();
   var tick_time = t1 - t0;

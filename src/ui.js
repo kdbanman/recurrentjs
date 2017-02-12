@@ -12,7 +12,9 @@ $(function() {
   };
 
   var stopLearning = function () {
-    if(isLearning()) { clearInterval(learnIntervalId); }
+    if(isLearning()) {
+      clearInterval(learnIntervalId);
+    }
     learnIntervalId = null;
   };
 
