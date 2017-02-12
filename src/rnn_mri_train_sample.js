@@ -102,8 +102,8 @@ var reinit = function () {
   solver = new R.Solver(); // reinit solver
   perplexityGraph = new Rvis.Graph();
 
-  perplexity_list = [];
-  tick_iter = 0;
+  perplexityHitory = [];
+  currentTick = 0;
 
   // process the input, filter out blanks
   var trainingDataLines_raw = $('#training_data').val().split('\n');
@@ -220,8 +220,8 @@ var sampleNetworkGreedy = function () {
   return predictSentence(model, false);
 }
 
-var perplexity_list = [];
-var tick_iter = 0;
+var perplexityHitory = [];
+var currentTick = 0;
 var tick = function () {
 
   // sample sentence fromd data
@@ -241,20 +241,20 @@ var tick = function () {
   var t1 = +new Date();
   var tick_time = t1 - t0;
 
-  perplexity_list.push(cost_struct.perplexity); // keep track of perplexity
+  perplexityHitory.push(cost_struct.perplexity);
 
   // evaluate now and then
-  tick_iter += 1;
-  if(tick_iter % 10 === 0) {
+  currentTick += 1;
+  if(currentTick % 10 === 0) {
     // keep track of perplexity
-    $('#epoch').text('epoch: ' + (tick_iter/epochSize).toFixed(2));
+    $('#epoch').text('epoch: ' + (currentTick/epochSize).toFixed(2));
     $('#last_tick_perplexity').text('perplexity: ' + cost_struct.perplexity.toFixed(2));
     $('#time_per_tick').text('forw/bwd time per example: ' + tick_time.toFixed(1) + 'ms');
 
-    if(tick_iter % 100 === 0) {
-      var median_perplexity = median(perplexity_list);
-      perplexity_list = [];
-      perplexityGraph.add(tick_iter, median_perplexity);
+    if(currentTick % 100 === 0) {
+      var median_perplexity = median(perplexityHitory);
+      perplexityHitory = [];
+      perplexityGraph.add(currentTick, median_perplexity);
       perplexityGraph.drawSelf(document.getElementById("perplexity_graph"));
     }
   }
