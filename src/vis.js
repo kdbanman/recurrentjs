@@ -1,21 +1,21 @@
 
-// contains various utility functions 
-var Rvis = (function(exports){
+// contains various utility functions
+var Rvis = (function (exports) {
 
   // can be used to graph loss, or accuract over time
-  var Graph = function(options) {
+  var Graph = function (options) {
     var options = options || {};
     this.step_horizon = options.step_horizon || 1000;
-    
+
     this.pts = [];
-    
+
     this.maxy = -9999;
     this.miny = 9999;
   }
 
   Graph.prototype = {
     // canv is the canvas we wish to update with this new datapoint
-    add: function(step, y) {
+    add: function (step, y) {
       var time = new Date().getTime(); // in ms
       if(y>this.maxy*0.99) this.maxy = y*1.05;
       if(y<this.miny*1.01) this.miny = y*0.95;
@@ -24,8 +24,8 @@ var Rvis = (function(exports){
       if(step > this.step_horizon) this.step_horizon *= 2;
     },
     // elt is a canvas we wish to draw into
-    drawSelf: function(canv) {
-      
+    drawSelf: function (canv) {
+
       var pad = 25;
       var H = canv.height;
       var W = canv.width;
@@ -34,7 +34,7 @@ var Rvis = (function(exports){
       ctx.clearRect(0, 0, W, H);
       ctx.font="10px Georgia";
 
-      var f2t = function(x) {
+      var f2t = function (x) {
         var dd = 1.0 * Math.pow(10, 2);
         return '' + Math.floor(x*dd)/dd;
       }
@@ -61,7 +61,7 @@ var Rvis = (function(exports){
       if(N<2) return;
 
       // draw the actual curve
-      var t = function(x, y, s) {
+      var t = function (x, y, s) {
         var tx = x / s.step_horizon * (W-pad*2) + pad;
         var ty = H - ((y-s.miny) / (s.maxy-s.miny) * (H-pad*2) + pad);
         return {tx:tx, ty:ty}
@@ -85,4 +85,3 @@ var Rvis = (function(exports){
   return exports;
 
 })(typeof module != 'undefined' && module.exports);  // add exports to module.exports if in node.js
-

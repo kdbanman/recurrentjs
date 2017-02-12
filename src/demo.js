@@ -16,7 +16,7 @@ var pplGraph = new Rvis.Graph();
 
 var model = {};
 
-var initVocab = function(sents, count_threshold) {
+var initVocab = function (sents, count_threshold) {
   // go over all characters and keep track of all unique ones seen
   var txt = sents.join(''); // concat all
 
@@ -55,7 +55,7 @@ var initVocab = function(sents, count_threshold) {
   $("#prepro_status").text('found ' + vocab.length + ' distinct characters: ' + vocab.join(''));
 }
 
-var utilAddToModel = function(modelto, modelfrom) {
+var utilAddToModel = function (modelto, modelfrom) {
   for(var k in modelfrom) {
     if(modelfrom.hasOwnProperty(k)) {
       // copy over the pointer but change the key to use the append
@@ -64,7 +64,7 @@ var utilAddToModel = function(modelto, modelfrom) {
   }
 }
 
-var initModel = function() {
+var initModel = function () {
   // letter embedding vectors
   var model = {};
   model['Wil'] = new R.RandMat(input_size, letter_size , 0, 0.08);
@@ -80,7 +80,7 @@ var initModel = function() {
   return model;
 }
 
-var reinit_learning_rate_slider = function() {
+var reinit_learning_rate_slider = function () {
   // init learning rate slider for controlling the decay
   // note that learning_rate is a global variable
   $("#lr_slider").slider({
@@ -88,7 +88,7 @@ var reinit_learning_rate_slider = function() {
     max: Math.log10(0.01) + 0.05,
     step: 0.05,
     value: Math.log10(learning_rate),
-    slide: function( event, ui ) {
+    slide: function (_, ui) {
       learning_rate = Math.pow(10, ui.value);
       $("#lr_text").text(learning_rate.toFixed(5));
     }
@@ -96,7 +96,7 @@ var reinit_learning_rate_slider = function() {
   $("#lr_text").text(learning_rate.toFixed(5));
 }
 
-var reinit = function() {
+var reinit = function () {
   // note: reinit writes global vars
 
   // eval options to set some globals
@@ -124,7 +124,7 @@ var reinit = function() {
   model = initModel();
 }
 
-var forwardIndex = function(G, model, ix, prev) {
+var forwardIndex = function (G, model, ix, prev) {
   var x = G.rowPluck(model['Wil'], ix);
   // forward prop the sequence learner
   if(generator === 'rnn') {
@@ -135,7 +135,7 @@ var forwardIndex = function(G, model, ix, prev) {
   return out_struct;
 }
 
-var predictSentence = function(model, samplei, temperature) {
+var predictSentence = function (model, samplei, temperature) {
   if(typeof samplei === 'undefined') { samplei = false; }
   if(typeof temperature === 'undefined') { temperature = 1.0; }
 
@@ -177,7 +177,7 @@ var predictSentence = function(model, samplei, temperature) {
   return s;
 }
 
-var costfun = function(model, sent) {
+var costfun = function (model, sent) {
   // takes a model and a sentence and
   // calculates the loss. Also returns the Graph
   // object which can be used to do backprop
@@ -209,8 +209,8 @@ var costfun = function(model, sent) {
   return {'G':G, 'ppl':ppl, 'cost':cost};
 }
 
-var median = function(values) {
-  values.sort( function(a,b) {return a - b;} );
+var median = function (values) {
+  values.sort( function (a,b) {return a - b;} );
   var half = Math.floor(values.length/2);
   if(values.length % 2) return values[half];
   else return (values[half-1] + values[half]) / 2.0;
@@ -226,7 +226,7 @@ var sampleNetworkGreedy = function () {
 
 var ppl_list = [];
 var tick_iter = 0;
-var tick = function() {
+var tick = function () {
 
   // sample sentence fromd data
   var sentix = R.randi(0,data_sents.length);

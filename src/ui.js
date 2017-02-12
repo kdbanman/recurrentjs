@@ -1,5 +1,5 @@
 var learnIntervalId = null;
-$(function() {
+$(function () {
 
   var isLearning = function () {
     return learnIntervalId != null;
@@ -19,21 +19,21 @@ $(function() {
   };
 
   // attach button handlers
-  $('#learn').click(function(){
+  $('#learn').click(function () {
     stopLearning();
     reinit();
   });
-  $('#step').click(function() {
+  $('#step').click(function () {
     tick();
   });
-  $('#stop').click(function(){
+  $('#stop').click(function () {
     stopLearning();
   });
-  $("#resume").click(function(){
+  $("#resume").click(function () {
     startLearning();
   });
 
-  $("#sample_network").click(function(){
+  $("#sample_network").click(function () {
     var shouldRestart = isLearning();
     stopLearning();
 
@@ -57,7 +57,7 @@ $(function() {
     max: 1.05,
     step: 0.05,
     value: 0,
-    slide: function( event, ui ) {
+    slide: function (_, ui) {
       sample_softmax_temperature = Math.pow(10, ui.value);
       $("#temperature_text").text( sample_softmax_temperature.toFixed(2) );
     }
