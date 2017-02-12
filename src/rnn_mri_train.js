@@ -1,21 +1,4 @@
 
-// prediction params
-var sampleSoftmaxTemperature = 1.0; // how peaky model predictions should be
-var maxGenerationLength = 100; // max length of generated sentences
-
-// various global var inits
-var epochSize = -1;
-var inputSize = -1;
-var outputSize = -1;
-var characterToIndex = {};
-var indexToCharacter = {};
-var vocabulary = [];
-var trainingDataLines = [];
-var solver = new R.Solver();
-var perplexityGraph = new Rvis.Graph();
-
-var model = {};
-
 var initializeVocabulary = function (trainingDataString) {
   // go over all characters and keep track of all unique ones seen
 
@@ -131,48 +114,6 @@ var forwardIndex = function (G, model, ix, prev) {
   return out_struct;
 }
 
-var predictSentence = function (model, samplei, temperature) {
-  if(typeof samplei === 'undefined') { samplei = false; }
-  if(typeof temperature === 'undefined') { temperature = 1.0; }
-
-  var G = new R.Graph(false);
-  var s = '';
-  var prev = {};
-  while(true) {
-
-    // RNN tick
-    var ix = s.length === 0 ? 0 : characterToIndex[s[s.length-1]];
-    var lh = forwardIndex(G, model, ix, prev);
-    prev = lh;
-
-    // sample predicted letter
-    logprobs = lh.o;
-    if(temperature !== 1.0 && samplei) {
-      // scale log probabilities by temperature and renormalize
-      // if temperature is high, logprobs will go towards zero
-      // and the softmax outputs will be more diffuse. if temperature is
-      // very low, the softmax outputs will be more peaky
-      for(var q=0,nq=logprobs.w.length;q<nq;q++) {
-        logprobs.w[q] /= temperature;
-      }
-    }
-
-    probs = R.softmax(logprobs);
-    if(samplei) {
-      var ix = R.samplei(probs.w);
-    } else {
-      var ix = R.maxi(probs.w);
-    }
-
-    if(ix === 0) break; // END token predicted, break out
-    if(s.length > maxGenerationLength) { break; } // something is wrong
-
-    var letter = indexToCharacter[ix];
-    s += letter;
-  }
-  return s;
-}
-
 var costfun = function (model, sent) {
   // takes a model and a sentence and
   // calculates the loss. Also returns the Graph
@@ -212,16 +153,6 @@ var median = function (values) {
   else return (values[half-1] + values[half]) / 2.0;
 }
 
-var sampleNetwork = function () {
-  return predictSentence(model, true, sampleSoftmaxTemperature);
-}
-
-var sampleNetworkGreedy = function () {
-  return predictSentence(model, false);
-}
-
-var perplexityHitory = [];
-var currentTick = 0;
 var tick = function () {
 
   // sample sentence fromd data
