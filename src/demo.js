@@ -124,67 +124,6 @@ var reinit = function() {
   model = initModel();
 }
 
-var saveModel = function() {
-  var out = {};
-  out['hidden_sizes'] = hidden_sizes;
-  out['generator'] = generator;
-  out['letter_size'] = letter_size;
-  var model_out = {};
-  for(var k in model) {
-    if(model.hasOwnProperty(k)) {
-      model_out[k] = model[k].toJSON();
-    }
-  }
-  out['model'] = model_out;
-  var solver_out = {};
-  solver_out['decay_rate'] = solver.decay_rate;
-  solver_out['smooth_eps'] = solver.smooth_eps;
-  step_cache_out = {};
-  for(var k in solver.step_cache) {
-    if(solver.step_cache.hasOwnProperty(k)) {
-      step_cache_out[k] = solver.step_cache[k].toJSON();
-    }
-  }
-  solver_out['step_cache'] = step_cache_out;
-  out['solver'] = solver_out;
-  out['letterToIndex'] = letterToIndex;
-  out['indexToLetter'] = indexToLetter;
-  out['vocab'] = vocab;
-  $("#tio").val(JSON.stringify(out));
-}
-
-var loadModel = function(j) {
-  hidden_sizes = j.hidden_sizes;
-  generator = j.generator;
-  letter_size = j.letter_size;
-  model = {};
-  for(var k in j.model) {
-    if(j.model.hasOwnProperty(k)) {
-      var matjson = j.model[k];
-      model[k] = new R.Mat(1,1);
-      model[k].fromJSON(matjson);
-    }
-  }
-  solver = new R.Solver(); // have to reinit the solver since model changed
-  solver.decay_rate = j.solver.decay_rate;
-  solver.smooth_eps = j.solver.smooth_eps;
-  solver.step_cache = {};
-  for(var k in j.solver.step_cache){
-      if(j.solver.step_cache.hasOwnProperty(k)){
-          var matjson = j.solver.step_cache[k];
-          solver.step_cache[k] = new R.Mat(1,1);
-          solver.step_cache[k].fromJSON(matjson);
-      }
-  }
-  letterToIndex = j['letterToIndex'];
-  indexToLetter = j['indexToLetter'];
-  vocab = j['vocab'];
-
-  // reinit these
-  ppl_list = [];
-  tick_iter = 0;
-}
-
 var forwardIndex = function(G, model, ix, prev) {
   var x = G.rowPluck(model['Wil'], ix);
   // forward prop the sequence learner
@@ -324,36 +263,6 @@ var tick = function() {
       ppl_list = [];
       pplGraph.add(tick_iter, median_ppl);
       pplGraph.drawSelf(document.getElementById("pplgraph"));
-    }
-  }
-}
-
-var gradCheck = function() {
-  var model = initModel();
-  var sent = '^test sentence$';
-  var cost_struct = costfun(model, sent);
-  cost_struct.G.backward();
-  var eps = 0.000001;
-
-  for(var k in model) {
-    if(model.hasOwnProperty(k)) {
-      var m = model[k]; // mat ref
-      for(var i=0,n=m.w.length;i<n;i++) {
-
-        oldval = m.w[i];
-        m.w[i] = oldval + eps;
-        var c0 = costfun(model, sent);
-        m.w[i] = oldval - eps;
-        var c1 = costfun(model, sent);
-        m.w[i] = oldval;
-
-        var gnum = (c0.cost - c1.cost)/(2 * eps);
-        var ganal = m.dw[i];
-        var relerr = (gnum - ganal)/(Math.abs(gnum) + Math.abs(ganal));
-        if(relerr > 1e-1) {
-          console.log(k + ': numeric: ' + gnum + ', analytic: ' + ganal + ', err: ' + relerr);
-        }
-      }
     }
   }
 }

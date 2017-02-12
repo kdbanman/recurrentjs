@@ -31,21 +31,6 @@ $(function() {
     startLearning();
   });
 
-  $("#savemodel").click(saveModel);
-  $("#loadmodel").click(function(){
-    var j = JSON.parse($("#tio").val());
-    loadModel(j);
-  });
-
-  $("#loadpretrained").click(function(){
-    $.getJSON("lstm_100_model.json", function(data) {
-      pplGraph = new Rvis.Graph();
-      learning_rate = 0.0001;
-      reinit_learning_rate_slider();
-      loadModel(data);
-    });
-  });
-
   $("#sample_network").click(function(){
     var shouldRestart = isLearning();
     stopLearning();
