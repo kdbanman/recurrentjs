@@ -57,8 +57,8 @@ $(function () {
     step: 0.05,
     value: 0,
     slide: function (_, ui) {
-      sample_softmax_temperature = Math.pow(10, ui.value);
-      $("#temperature_text").text( sample_softmax_temperature.toFixed(2) );
+      sampleSoftmaxTemperature = Math.pow(10, ui.value);
+      $("#temperature_text").text( sampleSoftmaxTemperature.toFixed(2) );
     }
   });
 

@@ -1,22 +1,22 @@
 
 // prediction params
-var sample_softmax_temperature = 1.0; // how peaky model predictions should be
-var max_chars_gen = 100; // max length of generated sentences
+var sampleSoftmaxTemperature = 1.0; // how peaky model predictions should be
+var maxGenerationLength = 100; // max length of generated sentences
 
 // various global var inits
-var epoch_size = -1;
-var input_size = -1;
-var output_size = -1;
+var epochSize = -1;
+var inputSize = -1;
+var outputSize = -1;
 var letterToIndex = {};
 var indexToLetter = {};
-var vocab = [];
-var data_sents = [];
-var solver = new R.Solver(); // should be class because it needs memory for step caches
+var vocabulary = [];
+var training_data_lines = [];
+var solver = new R.Solver();
 var perplexityGraph = new Rvis.Graph();
 
 var model = {};
 
-var initVocab = function (sents, count_threshold) {
+var initializeVocabulary = function (sents, count_threshold) {
   // go over all characters and keep track of all unique ones seen
   var txt = sents.join(''); // concat all
 
@@ -31,7 +31,7 @@ var initVocab = function (sents, count_threshold) {
   // filter by count threshold and create pointers
   letterToIndex = {};
   indexToLetter = {};
-  vocab = [];
+  vocabulary = [];
   // NOTE: start at one because we will have START and END tokens!
   // that is, START token will be index 0 in model letter vectors
   // and END token will be index 0 in the next character softmax
@@ -39,20 +39,20 @@ var initVocab = function (sents, count_threshold) {
   for(ch in d) {
     if(d.hasOwnProperty(ch)) {
       if(d[ch] >= count_threshold) {
-        // add character to vocab
+        // add character to vocabulary
         letterToIndex[ch] = q;
         indexToLetter[q] = ch;
-        vocab.push(ch);
+        vocabulary.push(ch);
         q++;
       }
     }
   }
 
-  // globals written: indexToLetter, letterToIndex, vocab (list), and:
-  input_size = vocab.length + 1;
-  output_size = vocab.length + 1;
-  epoch_size = sents.length;
-  $("#preprocessing_results").text('found ' + vocab.length + ' distinct characters: ' + vocab.join(''));
+  // globals written: indexToLetter, letterToIndex, vocabulary (list), and:
+  inputSize = vocabulary.length + 1;
+  outputSize = vocabulary.length + 1;
+  epochSize = sents.length;
+  $("#preprocessing_results").text('found ' + vocabulary.length + ' distinct characters: ' + vocabulary.join(''));
 }
 
 var utilAddToModel = function (modelto, modelfrom) {
@@ -67,13 +67,13 @@ var utilAddToModel = function (modelto, modelfrom) {
 var initModel = function () {
   // letter embedding vectors
   var model = {};
-  model['Wil'] = new R.RandMat(input_size, letter_size , 0, 0.08);
+  model['Wil'] = new R.RandMat(inputSize, letter_size , 0, 0.08);
 
   if(generator === 'rnn') {
-    var rnn = R.initRNN(letter_size, hidden_sizes, output_size);
+    var rnn = R.initRNN(letter_size, hidden_sizes, outputSize);
     utilAddToModel(model, rnn);
   } else {
-    var lstm = R.initLSTM(letter_size, hidden_sizes, output_size);
+    var lstm = R.initLSTM(letter_size, hidden_sizes, outputSize);
     utilAddToModel(model, lstm);
   }
 
@@ -111,16 +111,16 @@ var reinit = function () {
   tick_iter = 0;
 
   // process the input, filter out blanks
-  var data_sents_raw = $('#training_data').val().split('\n');
-  data_sents = [];
-  for(var i=0;i<data_sents_raw.length;i++) {
-    var sent = data_sents_raw[i].trim();
+  var training_data_lines_raw = $('#training_data').val().split('\n');
+  training_data_lines = [];
+  for(var i=0;i<training_data_lines_raw.length;i++) {
+    var sent = training_data_lines_raw[i].trim();
     if(sent.length > 0) {
-      data_sents.push(sent);
+      training_data_lines.push(sent);
     }
   }
 
-  initVocab(data_sents, 1); // takes count threshold for characters
+  initializeVocabulary(training_data_lines, 1); // takes count threshold for characters
   model = initModel();
 }
 
@@ -169,7 +169,7 @@ var predictSentence = function (model, samplei, temperature) {
     }
 
     if(ix === 0) break; // END token predicted, break out
-    if(s.length > max_chars_gen) { break; } // something is wrong
+    if(s.length > maxGenerationLength) { break; } // something is wrong
 
     var letter = indexToLetter[ix];
     s += letter;
@@ -217,7 +217,7 @@ var median = function (values) {
 }
 
 var sampleNetwork = function () {
-  return predictSentence(model, true, sample_softmax_temperature);
+  return predictSentence(model, true, sampleSoftmaxTemperature);
 }
 
 var sampleNetworkGreedy = function () {
@@ -229,8 +229,8 @@ var tick_iter = 0;
 var tick = function () {
 
   // sample sentence fromd data
-  var sentix = R.randi(0,data_sents.length);
-  var sent = data_sents[sentix];
+  var sentix = R.randi(0,training_data_lines.length);
+  var sent = training_data_lines[sentix];
 
   var t0 = +new Date();  // log start timestamp
 
@@ -251,7 +251,7 @@ var tick = function () {
   tick_iter += 1;
   if(tick_iter % 10 === 0) {
     // keep track of perplexity
-    $('#epoch').text('epoch: ' + (tick_iter/epoch_size).toFixed(2));
+    $('#epoch').text('epoch: ' + (tick_iter/epochSize).toFixed(2));
     $('#last_tick_perplexity').text('perplexity: ' + cost_struct.perplexity.toFixed(2));
     $('#time_per_tick').text('forw/bwd time per example: ' + tick_time.toFixed(1) + 'ms');
 
