@@ -18,18 +18,17 @@ $(function () {
     learnIntervalId = null;
   };
 
-  // attach button handlers
-  $('#learn').click(function () {
+  $('#reinitialize_weights').click(function () {
     stopLearning();
     reinit();
   });
-  $('#step').click(function () {
+  $('#train_once').click(function () {
     tick();
   });
-  $('#stop').click(function () {
+  $('#pause_training').click(function () {
     stopLearning();
   });
-  $("#resume").click(function () {
+  $("#train_continuously").click(function () {
     startLearning();
   });
 
