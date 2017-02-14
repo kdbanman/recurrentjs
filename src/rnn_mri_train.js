@@ -103,15 +103,14 @@ var reinit = function () {
   model = initModel();
 }
 
-var forwardIndex = function (G, model, ix, prev) {
-  var x = G.rowPluck(model['Wil'], ix);
-  // forward prop the sequence learner
+var forwardPropagateNetwork = function (G, model, characterIndex, prev) {
+  var inputCharacterVector = G.rowPluck(model['Wil'], characterIndex);
   if(generator === 'rnn') {
-    var out_struct = R.forwardRNN(G, model, hidden_sizes, x, prev);
+    var networkOutput = R.forwardRNN(G, model, hidden_sizes, inputCharacterVector, prev);
   } else {
-    var out_struct = R.forwardLSTM(G, model, hidden_sizes, x, prev);
+    var networkOutput = R.forwardLSTM(G, model, hidden_sizes, inputCharacterVector, prev);
   }
-  return out_struct;
+  return networkOutput;
 }
 
 var costfun = function (model, sent) {
@@ -128,19 +127,19 @@ var costfun = function (model, sent) {
     var ix_source = i === -1 ? 0 : characterToIndex[sent[i]]; // first step: start with START token
     var ix_target = i === n-1 ? 0 : characterToIndex[sent[i+1]]; // last step: end with END token
 
-    lh = forwardIndex(G, model, ix_source, prev);
+    lh = forwardPropagateNetwork(G, model, ix_source, prev);
     prev = lh;
 
     // set gradients into logprobabilities
-    logprobs = lh.o; // interpret output as logprobs
-    probs = R.softmax(logprobs); // compute the softmax probabilities
+    var logProbabilities = lh.o; // interpret output as logProbabilities
+    probs = R.softmax(logProbabilities); // compute the softmax probabilities
 
     log2perplexity += -Math.log2(probs.w[ix_target]); // accumulate base 2 log prob and do smoothing
     cost += -Math.log(probs.w[ix_target]);
 
     // write gradients into log probabilities
-    logprobs.dw = probs.w;
-    logprobs.dw[ix_target] -= 1
+    logProbabilities.dw = probs.w;
+    logProbabilities.dw[ix_target] -= 1
   }
   var perplexity = Math.pow(2, log2perplexity / (n - 1));
   return {'G':G, 'perplexity':perplexity, 'cost':cost};
