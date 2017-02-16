@@ -1,5 +1,11 @@
 var learnIntervalId = null;
+var weightsComponent = null;
 $(function () {
+
+  var learnOnce = function () {
+    tick();
+    weightsComponent.render();
+  }
 
   var isLearning = function () {
     return learnIntervalId != null;
@@ -7,7 +13,7 @@ $(function () {
 
   var startLearning = function () {
     if(!isLearning()) {
-      learnIntervalId = setInterval(tick, 0);
+      learnIntervalId = setInterval(learnOnce, 0);
     }
   };
 
@@ -21,16 +27,11 @@ $(function () {
   $('#js-reinitialize_weights').click(function () {
     stopLearning();
     reinit();
+    weightsComponent.setNewModel(model);
   });
-  $('#js-train_once').click(function () {
-    tick();
-  });
-  $('#js-pause_training').click(function () {
-    stopLearning();
-  });
-  $("#js-train_continuously").click(function () {
-    startLearning();
-  });
+  $('#js-train_once').click(learnOnce);
+  $('#js-pause_training').click(stopLearning);
+  $("#js-train_continuously").click(startLearning);
 
   $("#sample_network").click(function () {
     var shouldRestart = isLearning();
@@ -65,4 +66,8 @@ $(function () {
   // MAIN ENTRY POINT
   // Initialize the network
   reinit();
+  weightsComponent = new WeightsComponent({
+    model: model,
+    parentElement: $('#js-weights_visualization')
+  });
 });
