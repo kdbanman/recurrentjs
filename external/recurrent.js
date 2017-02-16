@@ -72,6 +72,14 @@ var R = {}; // the Recurrent library
       assert(ix >= 0 && ix < this.w.length);
       this.w[ix] = v; 
     },
+    clone: function() {
+      var clone = new Mat(this.n, this.d);
+      for (var ix = 0; ix < this.w.length; ix++) {
+        clone.w[ix] = this.w[ix];
+        clone.dw[ix] = this.dw[ix];
+      }
+      return clone;
+    },
     toJSON: function() {
       var json = {};
       json['n'] = this.n;
