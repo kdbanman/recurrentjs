@@ -8,6 +8,9 @@ var WeightsComponent = function (options) {
   this.negativeActivationSaturation = options.negativeActivationSaturation || 70;
   this.fullActivationBrightness = options.fullActivationBrightness || 70;
 
+  this.diffTrackDecayRate = options.diffTrackDecayRate || 0.95;
+  this.diffTrackSensitivity = options.diffTrackSensitivity || 100.0;
+
   this.parentElement = options.parentElement;
 
   this.setNewModel(options.model);
@@ -21,17 +24,20 @@ WeightsComponent.prototype = {
     if (self.keys) {
       self.keys.forEach(function (key) {
         self.canvases[key].remove();
+        self.diffTrackingMats[key] = undefined;
         self.oldMats[key] = undefined;
       });
     }
 
     self.canvases = {};
+    self.diffTrackingMats = {};
     self.oldMats = {};
     self.keys = Object.keys(self.model);
 
     self.keys.forEach(function (key) {
       var mat = self.model[key];
-      self.oldMats[key] = mat;
+      self.diffTrackingMats[key] = new R.Mat(mat.n, mat.d);
+      self.oldMats[key] = new R.Mat(mat.n, mat.d);
 
       var rowCount = mat.n;
       var colCount = mat.d;
@@ -51,21 +57,21 @@ WeightsComponent.prototype = {
     this.keys.forEach(function (key) {
       var mat = self.model[key];
       var oldMat = self.oldMats[key];
-      var weightDiffMat = undefined;
       var ctx = self.canvases[key].getContext('2d');
 
       var minmaxWeightIndices = R.minmaxi(mat.w);
       var minWeight = mat.w[minmaxWeightIndices[0]];
       var maxWeight = mat.w[minmaxWeightIndices[1]];
 
-      if (oldMat != null) {
-        // TODO G.sub is not a function
-        // var G = new R.Graph(false);
-        // weightDiffMat = G.sub(oldMat, mat);
-        // var minmaxWeightDiffIndices = R.minmaxi(weightDiffMat);
-        // var minWeightDiff = weightDiffMat[minmaxWeightDiffIndices[0]];
-        // var maxWeightDiff = weightDiffMat[minmaxWeightDiffIndices[1]];
-      }
+      var weightDiffMat, maxWeightDiff;
+      var G = new R.Graph(false);
+      weightDiffMat = G.sub(oldMat, mat);
+      weightDiffMat = G.eltmul(weightDiffMat, weightDiffMat);
+
+      self.diffTrackingMats[key] = G.add(weightDiffMat, self.diffTrackingMats[key]);
+
+      var maxWeightDiffIndex = R.maxi(weightDiffMat.w);
+      maxWeightDiff = Math.max(weightDiffMat.w[maxWeightDiffIndex], self.diffTrackSensitivity);
 
       for (var row = 0; row < mat.n; row++) {
         for (var col = 0; col < mat.d; col++) {
@@ -74,24 +80,24 @@ WeightsComponent.prototype = {
           ctx.fillStyle = self.getActivationColor(minWeight, maxWeight, weight);
           ctx.fillRect(col * self.pixelSize, row * self.pixelSize, self.pixelSize, self.pixelSize);
 
-          if (weightDiffMat != null) {
+          var weightDiff = self.diffTrackingMats[key].get(row, col);
 
-            var weightDiff = weightDiffMat.get(row, col);
-
-            // TODO compute stroke color from min and max
-            // ctx.lineWidth = 1;
-            // ctx.strokeStyle = 'rgb(255,255,255)';
-            // ctx.strokeRect(col * self.pixelSize, row * self.pixelSize, self.pixelSize, self.pixelSize);
-          }
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = self.getFocusColor(0, maxWeightDiff, weightDiff);
+          ctx.strokeRect(col * self.pixelSize, row * self.pixelSize, self.pixelSize - 1, self.pixelSize - 1);
         }
       }
 
-      self.oldMats[key] = mat;
+      for (var i = 0; i < self.diffTrackingMats[key].w.length; i++) {
+        self.diffTrackingMats[key].w[i] *= self.diffTrackDecayRate;
+      }
+
+      self.oldMats[key] = mat.clone();
     });
   },
-  getActivationColor: function (min, max, weight) {
+  getActivationColor: function (min, max, value) {
     var hue, saturation, lightness;
-    if (weight < 0) {
+    if (value < 0) {
       hue = this.negativeActivationHue;
       saturation = this.negativeActivationSaturation;
     } else {
@@ -101,17 +107,24 @@ WeightsComponent.prototype = {
 
     if (min * max > 0) {
       // signs are the same.
-      lightness = this.fullActivationBrightness * (max - weight) / (max - min);
+      lightness = this.fullActivationBrightness * (max - value) / (max - min);
     } else {
       // signs differ: min is negative and max is positive.
       var maxDisplacement = max > -1 * min ? max : -1 * min;
-      var absoluteWeight = weight > 0 ? weight : -1 * weight;
-      lightness = this.fullActivationBrightness * absoluteWeight / maxDisplacement;
+      var absoluteValue = value > 0 ? value : -1 * value;
+      lightness = this.fullActivationBrightness * absoluteValue / maxDisplacement;
     }
 
     // round to nearest tenth
     lightness = Math.round(lightness * 10) / 10;
 
     return 'hsl(' + hue + ',' + saturation + '%,' + lightness + '%)';
+  },
+  getFocusColor: function (min, max, value) {
+    var fraction = (value - min) / (max - min);
+
+    // round to nearest tenth
+    var colorVal = Math.round(2550 * fraction) / 10;
+    return 'rgb(' + colorVal + ',' + colorVal + ',' + colorVal + ')';
   }
 }

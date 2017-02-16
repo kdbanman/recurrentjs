@@ -2,10 +2,30 @@ var learnIntervalId = null;
 var weightsComponent = null;
 $(function () {
 
+  var reinitLearningRateSlider = function () {
+    // note that learning_rate is a global variable
+    $("#learning_rate_slider").slider({
+      min: Math.log10(0.01) - 3.0,
+      max: Math.log10(0.01) + 0.05,
+      step: 0.05,
+      value: Math.log10(learning_rate),
+      slide: function (_, ui) {
+        learning_rate = Math.pow(10, ui.value);
+        $("#learning_rate_slider_value").text(learning_rate.toFixed(5));
+      }
+    });
+    $("#learning_rate_slider_value").text(learning_rate.toFixed(5));
+  };
+
+  var reinitializeUI = function () {
+    reinit();
+    reinitLearningRateSlider();
+  };
+
   var learnOnce = function () {
     tick();
     weightsComponent.render();
-  }
+  };
 
   var isLearning = function () {
     return learnIntervalId != null;
@@ -26,7 +46,7 @@ $(function () {
 
   $('#js-reinitialize_weights').click(function () {
     stopLearning();
-    reinit();
+    reinitializeUI();
     weightsComponent.setNewModel(model);
   });
   $('#js-train_once').click(learnOnce);
@@ -65,9 +85,21 @@ $(function () {
 
   // MAIN ENTRY POINT
   // Initialize the network
-  reinit();
+  reinitializeUI();
   weightsComponent = new WeightsComponent({
     model: model,
     parentElement: $('#js-weights_visualization')
   });
+
+  $("#diff_track_sensitivity_slider").slider({
+    min: Math.log10(0.01) - 3.0,
+    max: Math.log10(0.01) + 5,
+    step: 0.05,
+    value: Math.log10(weightsComponent.diffTrackSensitivity),
+    slide: function (_, ui) {
+      weightsComponent.diffTrackSensitivity = Math.pow(10, ui.value);
+      $("#diff_track_sensitivity_slider_value").text(weightsComponent.diffTrackSensitivity.toFixed(5));
+    }
+  });
+  $("#diff_track_sensitivity_slider_value").text(weightsComponent.diffTrackSensitivity.toFixed(5));
 });

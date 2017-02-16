@@ -58,29 +58,11 @@ var initModel = function () {
   return model;
 }
 
-var reinit_learning_rate_slider = function () {
-  // init learning rate slider for controlling the decay
-  // note that learning_rate is a global variable
-  $("#learning_rate_slider").slider({
-    min: Math.log10(0.01) - 3.0,
-    max: Math.log10(0.01) + 0.05,
-    step: 0.05,
-    value: Math.log10(learning_rate),
-    slide: function (_, ui) {
-      learning_rate = Math.pow(10, ui.value);
-      $("#learning_rate_slider_value").text(learning_rate.toFixed(5));
-    }
-  });
-  $("#learning_rate_slider_value").text(learning_rate.toFixed(5));
-}
-
 var reinit = function () {
   // note: reinit writes global vars
 
   // eval options to set some globals
   eval($("#js-initialization_code").val());
-
-  reinit_learning_rate_slider();
 
   solver = new R.Solver(); // reinit solver
   perplexityGraph = new Rvis.Graph();
