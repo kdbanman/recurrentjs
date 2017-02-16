@@ -506,6 +506,27 @@ var R = {}; // the Recurrent library
     return minix;
   }
 
+  // Addition by @kdbanman
+  var minmaxi = function(w) {
+    // argmin and argmax of array w
+    var minv = w[0];
+    var minix = 0;
+    var maxv = w[0];
+    var maxix = 0;
+    for(var i=1,n=w.length;i<n;i++) {
+      var v = w[i];
+      if(v < minv) {
+        minix = i;
+        minv = v;
+      }
+      if(v > maxv) {
+        maxix = i;
+        maxv = v;
+      }
+    }
+    return [minix,maxix];
+  }
+
   var samplei = function(w) {
     // sample argmax from w, assuming w are 
     // probabilities that sum to one
@@ -523,6 +544,7 @@ var R = {}; // the Recurrent library
   // various utils
   global.maxi = maxi;
   global.mini = mini;
+  global.minmaxi = minmaxi;
   global.samplei = samplei;
   global.randi = randi;
   global.softmax = softmax;
