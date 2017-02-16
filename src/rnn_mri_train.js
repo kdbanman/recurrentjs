@@ -103,6 +103,11 @@ var reinit = function () {
   model = initModel();
 }
 
+// return {
+//   h: hidden representation,
+//   c: cell memory iff LSTM,
+//   o: log probability output
+// }
 var forwardPropagateNetwork = function (G, model, characterIndex, prev) {
   var inputCharacterVector = G.rowPluck(model['Wil'], characterIndex);
   if(generator === 'rnn') {

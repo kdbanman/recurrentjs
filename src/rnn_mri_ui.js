@@ -37,14 +37,14 @@ $(function () {
     stopLearning();
 
     $('#hot_samples .generated_sample').last().remove();
-    var pred = sampleNetwork();
-    var pred_div = '<div class="generated_sample">'+pred+'</div>'
-    $('#hot_samples').prepend(pred_div);
+    var generatedSentence = sampleNetwork();
+    var generatedSentenceDiv = '<div class="generated_sample">'+generatedSentence+'</div>'
+    $('#hot_samples').prepend(generatedSentenceDiv);
 
     $('#argmax_samples .generated_sample').last().remove();
-    var argmax_pred = sampleNetworkGreedy();
-    var argmax_pred_div = '<div class="generated_sample">'+argmax_pred+'</div>'
-    $('#argmax_samples').prepend(argmax_pred_div);
+    var argmaxGeneratedSentence = sampleNetworkGreedy();
+    var argmaxGeneratedSentenceDiv = '<div class="generated_sample">'+argmaxGeneratedSentence+'</div>'
+    $('#argmax_samples').prepend(argmaxGeneratedSentenceDiv);
 
     if (shouldRestart) {
       startLearning();
