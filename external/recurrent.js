@@ -241,6 +241,24 @@ var R = {}; // the Recurrent library
       }
       return out;
     },
+    sub: function(m1, m2) {
+      assert(m1.w.length === m2.w.length);
+
+      var out = new Mat(m1.n, m1.d);
+      for(var i=0,n=m1.w.length;i<n;i++) {
+        out.w[i] = m1.w[i] - m2.w[i];
+      }
+      if(this.needs_backprop) {
+        var backward = function() {
+          for(var i=0,n=m1.w.length;i<n;i++) {
+            m1.dw[i] += out.dw[i];
+            m2.dw[i] += out.dw[i];
+          }
+        }
+        this.backprop.push(backward);
+      }
+      return out;
+    },
     eltmul: function(m1, m2) {
       assert(m1.w.length === m2.w.length);
 
