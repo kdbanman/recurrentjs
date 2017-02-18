@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,71 +28,80 @@
 <body>
 
 <div class="container">
+
+  <h1>RNN MRI</h1>
+
+  <div id="about">
+    RNN MRI is a tool that visualizes the internal dynamics of a character-lever Recurrent Neural Network (RNN) during training, prediction, and generation.
+    See <a>Andrej Karpathy's wonderful article on character-level RNNs</a> to learn more about the network you see visualized.<br><br>
+
+    The demo is pre-filled with URLs that point to images, as scraped from some StackOverflow pages.  Fill it with different data and retrain if you wish.<br><br>
+  </div>
+
+  <h2>Training</h2>
+
+  <textarea id="js-initialization_code" style="width:100%; height:200px;">
+generator = 'lstm'; // can be 'rnn' or 'lstm'
+hidden_sizes = [20, 10]; // list of sizes of hidden layers
+letter_size = 5; // size of letter embeddings
+
+regc = 0.000001; // L2 regularization strength
+learning_rate = 0.01;
+clipval = 5.0; // clip gradients at this value
+  </textarea><br />
+
+  <button class="btn btn-default" id="js-reinitialize_weights">
+    <span class="glyphicon glyphicon-repeat"></span>
+    Reinitialize
+  </button>
+
+  <button class="btn btn-default" id="js-train_once">
+    <span class="glyphicon glyphicon-step-forward"></span>
+    Train Once
+  </button>
+
+  <button class="btn btn-default" id="js-train_continuously">
+    <span class="glyphicon glyphicon-play"></span>
+    Train Continuously
+  </button>
+
+  <button class="btn btn-default" id="js-pause_training">
+    <span class="glyphicon glyphicon-pause"></span>
+    Pause
+  </button>
+
   <div class="row">
-    <h1>RNN MRI</h1>
-    <div id="about">
-      RNN MRI is a tool that visualizes the internal dynamics of a character-lever Recurrent Neural Network (RNN) during training, prediction, and generation.
-      See <a>Andrej Karpathy's wonderful article on character-level RNNs</a> to learn more about the network you see visualized.<br><br>
-
-      The demo is pre-filled with URLs that point to images, as scraped from some StackOverflow pages.  Fill it with different data and retrain if you wish.<br><br>
-    </div>
-
-    <textarea id="js-initialization_code" style="width:100%; height:200px;">
-  generator = 'lstm'; // can be 'rnn' or 'lstm'
-  hidden_sizes = [20, 10]; // list of sizes of hidden layers
-  letter_size = 5; // size of letter embeddings
-
-  regc = 0.000001; // L2 regularization strength
-  learning_rate = 0.01;
-  clipval = 5.0; // clip gradients at this value
-    </textarea><br />
+    <div class="col-sm-3">Learning rate:</div>
+    <div class="col-sm-6"><div id="learning_rate_slider"></div></div>
+    <div class="col-sm-3"><div id="learning_rate_slider_value"></div></div>
   </div>
 
   <div class="row">
-    <h3>Training controls:</h3>
-
-    <button class="btn btn-default" id="js-reinitialize_weights">reinitialize</button>
-    <button class="btn btn-default" id="js-train_once">train once</button>
-    <button class="btn btn-default" id="js-train_continuously">train continuously</button>
-    <button class="btn btn-default" id="js-pause_training">pause</button>
-
-    <div class="row">
-      <div class="col-sm-3">Learning rate:</div>
-      <div class="col-sm-6" id="learning_rate_slider"></div>
-      <div class="col-sm-3" id="learning_rate_slider_value"></div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-3">Diff tracking sensitivity:</div>
-      <div class="col-sm-6" id="diff_track_sensitivity_slider"></div>
-      <div class="col-sm-3" id="diff_track_sensitivity_slider_value"></div>
-    </div>
-
-    <h3>Training stats:</h3>
-    <canvas id="perplexity_graph"></canvas>
-    <div id="time_per_tick"></div>
-    <div id="epoch"></div>
-    <div id="last_tick_perplexity"></div>
-
-    <div id="js-weights_visualization"></div>
+    <div class="col-sm-3">Diff tracking threshold:</div>
+    <div class="col-sm-6"><div id="diff_track_sensitivity_slider"></div></div>
+    <div class="col-sm-3"><div id="diff_track_sensitivity_slider_value"></div></div>
   </div>
 
+  <div id="js-weights_visualization"></div>
+
+  <canvas id="perplexity_graph"></canvas>
+  <div id="time_per_tick"></div>
+  <div id="epoch"></div>
+  <div id="last_tick_perplexity"></div>
+
   <div class="row">
-    <h3>Model generation:</h3>
+
+    <h2>Generation</h2>
+
     <div class="row">
       <div class="col-sm-3">Softmax sample temperature:</div>
       <div class="col-sm-6" id="temperature_slider"></div>
       <div class="col-sm-3" id="temperature_text"></div>
     </div>
 
-    <div class="row">
-      <div class="col-md-12">
-        <button class="btn btn-default" id="sample_network">sample network</button>
-      </div>
-    </div>
+    <button class="btn btn-default" id="sample_network">Generate Samples</button>
 
     <div class="row">
-
       <div class="col-sm-6">
         <h4>Softmax distribution generation:</h4>
 
@@ -119,7 +129,11 @@
   </div>
 
   <div class="row">
-    <h3>Training data:</h3>
+
+    <h2>Training Data</h2>
+
+    <p id="preprocessing_results"></p>
+
     <textarea style="width:100%; height:200px;" id="training_data">
 https://i.stack.imgur.com/PObJM.png
 https://www.stackoverflowbusiness.com/hubfs/B2B-SO/images/SO_Talent.svg
@@ -711,7 +725,6 @@ https://i.stack.imgur.com/D4tIX.jpg
 https://www.stackoverflowbusiness.com/hubfs/B2B-SO/images/home/Understand.svg
 https://www.stackoverflowbusiness.com/hubfs/images/media_kit/samsung.svg
     </textarea>
-    <div id="preprocessing_results"></div>
   </div>
 </div>
 
