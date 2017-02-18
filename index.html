@@ -71,13 +71,19 @@ clipval = 5.0; // clip gradients at this value
   </button>
 
   <div>
-    <span>Learning rate:</span>
     <input id="learning_rate_slider" type="text"></input>
+    <span>Learning Rate</span>
   </div>
 
   <div>
-    <span>Diff tracking threshold:</span>
+    <label class="btn btn-primary">
+      <input id="diff_track_toggle" type="checkbox"> Highlight Diffs
+    </label>
+  </div>
+
+  <div>
     <input id="diff_track_sensitivity_slider" type="text"></input>
+    <span>Diff Highlight Threshold</span>
   </div>
 
   <div id="js-weights_visualization"></div>

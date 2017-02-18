@@ -126,7 +126,7 @@ WeightsComponent.prototype = {
     var fraction = (value - min) / (max - min);
 
     // round to nearest tenth
-    var alphaVal = Math.round(2550 * fraction) / 10;
+    var alphaVal = Math.round(20 * fraction) / 10;
     return 'rgba(255,255,255,' + alphaVal + ')';
   }
 }

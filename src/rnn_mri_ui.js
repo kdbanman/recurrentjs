@@ -3,7 +3,6 @@ var weightsComponent = null;
 $(function () {
 
   var reinitLearningRateSlider = function () {
-    console.log(learning_rate);
     // note that learning_rate is a global variable
     $("#learning_rate_slider").slider({
       min: Math.log10(0.01) - 3.0,
@@ -92,6 +91,10 @@ $(function () {
     model: model,
     parentElement: $('#js-weights_visualization'),
     pixelSize: 8
+  });
+
+  $("#diff_track_toggle").change(function (evt) {
+    weightsComponent.showDiffs = evt.target.checked;
   });
 
   $("#diff_track_sensitivity_slider").slider({
