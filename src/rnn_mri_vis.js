@@ -8,6 +8,7 @@ var WeightsComponent = function (options) {
   this.negativeActivationSaturation = options.negativeActivationSaturation || 70;
   this.fullActivationBrightness = options.fullActivationBrightness || 70;
 
+  this.showDiffs = options.showDiffs || false;
   this.diffTrackDecayRate = options.diffTrackDecayRate || 0.95;
   this.diffTrackSensitivity = options.diffTrackSensitivity || 100.0;
 
@@ -80,11 +81,12 @@ WeightsComponent.prototype = {
           ctx.fillStyle = self.getActivationColor(minWeight, maxWeight, weight);
           ctx.fillRect(col * self.pixelSize, row * self.pixelSize, self.pixelSize, self.pixelSize);
 
-          var weightDiff = self.diffTrackingMats[key].get(row, col);
+          if (self.showDiffs) {
+            var weightDiff = self.diffTrackingMats[key].get(row, col);
 
-          ctx.lineWidth = 1;
-          ctx.strokeStyle = self.getFocusColor(0, maxWeightDiff, weightDiff);
-          ctx.strokeRect(col * self.pixelSize, row * self.pixelSize, self.pixelSize - 1, self.pixelSize - 1);
+            ctx.fillStyle = self.getFocusColor(0, maxWeightDiff, weightDiff);
+            ctx.fillRect(col * self.pixelSize, row * self.pixelSize, self.pixelSize, self.pixelSize);
+          }
         }
       }
 
@@ -124,7 +126,7 @@ WeightsComponent.prototype = {
     var fraction = (value - min) / (max - min);
 
     // round to nearest tenth
-    var colorVal = Math.round(2550 * fraction) / 10;
-    return 'rgb(' + colorVal + ',' + colorVal + ',' + colorVal + ')';
+    var alphaVal = Math.round(2550 * fraction) / 10;
+    return 'rgba(255,255,255,' + alphaVal + ')';
   }
 }
