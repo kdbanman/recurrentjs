@@ -1,0 +1,14 @@
+#js-weights_visualization {
+  display: flex;
+  align-items: center;
+}
+
+.generated_sample {
+  padding: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+canvas {
+  margin: 1px;
+}
