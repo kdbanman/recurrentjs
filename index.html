@@ -5,16 +5,16 @@
 
   <title>RNN MRI</title>
 
-  <link href="external/jquery-ui.min.css" rel="stylesheet">
-
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.css" integrity="sha256-WX5auLjOHpsee7v+gRMOUmhxs0GRvp7cToOfr00LoBI=" crossorigin="anonymous" />
 
   <link href="style.css" rel="stylesheet">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script src="external/jquery-ui.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js" integrity="sha256-u9WmKX0xDjTHY993hjdYILt3bALMMcLiTCrWmsZ/o7g=" crossorigin="anonymous"></script>
+
   <script src="external/recurrent.js"></script>
   <script src="external/recurrent_vis.js"></script>
 
@@ -70,16 +70,14 @@ clipval = 5.0; // clip gradients at this value
     Pause
   </button>
 
-  <div class="row">
-    <div class="col-sm-3">Learning rate:</div>
-    <div class="col-sm-6"><div id="learning_rate_slider"></div></div>
-    <div class="col-sm-3"><div id="learning_rate_slider_value"></div></div>
+  <div>
+    <span>Learning rate:</span>
+    <input id="learning_rate_slider" type="text"></input>
   </div>
 
-  <div class="row">
-    <div class="col-sm-3">Diff tracking threshold:</div>
-    <div class="col-sm-6"><div id="diff_track_sensitivity_slider"></div></div>
-    <div class="col-sm-3"><div id="diff_track_sensitivity_slider_value"></div></div>
+  <div>
+    <span>Diff tracking threshold:</span>
+    <input id="diff_track_sensitivity_slider" type="text"></input>
   </div>
 
   <div id="js-weights_visualization"></div>
@@ -93,10 +91,9 @@ clipval = 5.0; // clip gradients at this value
 
     <h2>Generation</h2>
 
-    <div class="row">
-      <div class="col-sm-3">Softmax sample temperature:</div>
-      <div class="col-sm-6" id="temperature_slider"></div>
-      <div class="col-sm-3" id="temperature_text"></div>
+    <div>
+      <span>Softmax sample temperature:</span>
+      <input id="temperature_slider" type="text"></input>
     </div>
 
     <button class="btn btn-default" id="sample_network">Generate Samples</button>

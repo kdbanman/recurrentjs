@@ -3,18 +3,19 @@ var weightsComponent = null;
 $(function () {
 
   var reinitLearningRateSlider = function () {
+    console.log(learning_rate);
     // note that learning_rate is a global variable
     $("#learning_rate_slider").slider({
       min: Math.log10(0.01) - 3.0,
       max: Math.log10(0.01) + 0.05,
       step: 0.05,
       value: Math.log10(learning_rate),
-      slide: function (_, ui) {
-        learning_rate = Math.pow(10, ui.value);
-        $("#learning_rate_slider_value").text(learning_rate.toFixed(5));
+      formatter: function (value) {
+        return Math.pow(10, value).toPrecision(3);
       }
-    });
-    $("#learning_rate_slider_value").text(learning_rate.toFixed(5));
+    }).on("slide", function (evt) {
+      learning_rate = Math.pow(10, evt.value);
+    })
   };
 
   var reinitializeUI = function () {
@@ -77,10 +78,11 @@ $(function () {
     max: 1.05,
     step: 0.05,
     value: 0,
-    slide: function (_, ui) {
-      sampleSoftmaxTemperature = Math.pow(10, ui.value);
-      $("#temperature_text").text( sampleSoftmaxTemperature.toFixed(2) );
+    formatter: function (value) {
+      return Math.pow(10, value).toPrecision(3);
     }
+  }).on("slide", function (evt) {
+    sampleSoftmaxTemperature = Math.pow(10, evt.value);
   });
 
   // MAIN ENTRY POINT
@@ -94,13 +96,13 @@ $(function () {
 
   $("#diff_track_sensitivity_slider").slider({
     min: Math.log10(0.01) - 3.0,
-    max: Math.log10(0.01) + 5,
+    max: Math.log10(0.01) + 4,
     step: 0.05,
     value: Math.log10(weightsComponent.diffTrackSensitivity),
-    slide: function (_, ui) {
-      weightsComponent.diffTrackSensitivity = Math.pow(10, ui.value);
-      $("#diff_track_sensitivity_slider_value").text(weightsComponent.diffTrackSensitivity.toFixed(5));
+    formatter: function (value) {
+      return Math.pow(10, value).toPrecision(3);
     }
+  }).on("slide", function (evt) {
+    weightsComponent.diffTrackSensitivity = Math.pow(10, evt.value);
   });
-  $("#diff_track_sensitivity_slider_value").text(weightsComponent.diffTrackSensitivity.toFixed(5));
 });
