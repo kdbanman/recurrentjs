@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
   <title>RNN MRI</title>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.css" integrity="sha256-WX5auLjOHpsee7v+gRMOUmhxs0GRvp7cToOfr00LoBI=" crossorigin="anonymous" />
 
-  <link href="style.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js" integrity="sha256-u9WmKX0xDjTHY993hjdYILt3bALMMcLiTCrWmsZ/o7g=" crossorigin="anonymous"></script>
 
   <script src="external/recurrent.js"></script>
@@ -76,9 +76,16 @@ clipval = 5.0; // clip gradients at this value
   </div>
 
   <div>
-    <label class="btn btn-primary">
-      <input id="diff_track_toggle" type="checkbox"> Highlight Diffs
-    </label>
+    <input id="diff_track_toggle"
+           type="text"
+           data-provide="slider"
+           data-slider-ticks="[0, 1]"
+           data-slider-min="0"
+           data-slider-max="1"
+           data-slider-step="1"
+           data-slider-value="0"
+           data-slider-tooltip="hide"/>
+    <span>Highlight Diffs</span>
   </div>
 
   <div>
@@ -93,7 +100,7 @@ clipval = 5.0; // clip gradients at this value
   <div id="epoch"></div>
   <div id="last_tick_perplexity"></div>
 
-  <div class="row">
+  <div>
 
     <h2>Generation</h2>
 
@@ -131,7 +138,7 @@ clipval = 5.0; // clip gradients at this value
     </div>
   </div>
 
-  <div class="row">
+  <div>
 
     <h2>Training Data</h2>
 

@@ -94,7 +94,7 @@ $(function () {
   });
 
   $("#diff_track_toggle").change(function (evt) {
-    weightsComponent.showDiffs = evt.target.checked;
+    weightsComponent.showDiffs = evt.target.value === "1";
   });
 
   $("#diff_track_sensitivity_slider").slider({
