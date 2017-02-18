@@ -59,12 +59,12 @@ $(function () {
 
     $('#hot_samples .generated_sample').last().remove();
     var generatedSentence = sampleNetwork();
-    var generatedSentenceDiv = '<div class="generated_sample">'+generatedSentence+'</div>'
+    var generatedSentenceDiv = '<div class="generated_sample"><samp>'+generatedSentence+'</samp></div>'
     $('#hot_samples').prepend(generatedSentenceDiv);
 
     $('#argmax_samples .generated_sample').last().remove();
     var argmaxGeneratedSentence = sampleNetworkGreedy();
-    var argmaxGeneratedSentenceDiv = '<div class="generated_sample">'+argmaxGeneratedSentence+'</div>'
+    var argmaxGeneratedSentenceDiv = '<div class="generated_sample"><samp>'+argmaxGeneratedSentence+'</samp></div>'
     $('#argmax_samples').prepend(argmaxGeneratedSentenceDiv);
 
     if (shouldRestart) {
@@ -88,7 +88,8 @@ $(function () {
   reinitializeUI();
   weightsComponent = new WeightsComponent({
     model: model,
-    parentElement: $('#js-weights_visualization')
+    parentElement: $('#js-weights_visualization'),
+    pixelSize: 8
   });
 
   $("#diff_track_sensitivity_slider").slider({
