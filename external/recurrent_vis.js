@@ -9,8 +9,8 @@ var Rvis = (function (exports) {
 
     this.pts = [];
 
-    this.maxy = -9999;
-    this.miny = 9999;
+    this.maxy = -1;
+    this.miny = 1;
   }
 
   Graph.prototype = {
@@ -53,7 +53,9 @@ var Rvis = (function (exports) {
         var ypos = i/ng*(H-2*pad)+pad;
         ctx.moveTo(pad, ypos);
         ctx.lineTo(W-pad, ypos);
-        ctx.fillText(f2t((ng-i)/ng*(this.maxy-this.miny) + this.miny), 0, ypos);
+        if (this.maxy > this.miny) {
+          ctx.fillText(f2t(((ng-i)/ng*(this.maxy-this.miny) + this.miny).toPrecision(3)), 0, ypos);
+        }
       }
       ctx.stroke();
 
