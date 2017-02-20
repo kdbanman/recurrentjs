@@ -1,8 +1,12 @@
 
 var WeightsComponent = function (options) {
 
-  this.pixelHeight = options.pixelHeight || 10;
+  this.pixelHeight = options.pixelHeight || 5;
   this.pixelWidth = options.pixelWidth || 5;
+
+  this.zoomPixelHeight = options.zoomPixelHeight || 20;
+  this.zoomPixelWidth = options.zoomPixelWidth || 20;
+
   this.positiveActivationHue = options.positiveActivationHue || 190;
   this.negativeActivationHue = options.negativeActivationHue || 6;
   this.positiveActivationSaturation = options.positiveActivationSaturation || 100;
@@ -14,6 +18,7 @@ var WeightsComponent = function (options) {
   this.diffTrackSensitivity = options.diffTrackSensitivity || 100.0;
 
   this.parentElement = options.parentElement;
+  this.zoomElement = options.zoomElement;
 
   this.setNewModel(options.model);
 }
@@ -47,56 +52,80 @@ WeightsComponent.prototype = {
       var canvas = document.createElement('canvas');
       canvas.height = rowCount * self.pixelHeight;
       canvas.width = colCount * self.pixelWidth;
+      canvas.onmouseenter = function (evt) {
+        self.zoomedKey = key;
+        self.renderZoomCanvas();
+      };
 
       self.parentElement.append(canvas);
 
       self.canvases[key] = canvas;
     });
+
+    self.zoomCanvas = document.createElement('canvas');
+    self.zoomElement.append(self.zoomCanvas);
+    self.zoomedKey = self.keys[0];
+
     this.render();
   },
   render: function () {
     var self = this;
     this.keys.forEach(function (key) {
-      var mat = self.model[key];
-      var oldMat = self.oldMats[key];
-      var ctx = self.canvases[key].getContext('2d');
-
-      var minmaxWeightIndices = R.minmaxi(mat.w);
-      var minWeight = mat.w[minmaxWeightIndices[0]];
-      var maxWeight = mat.w[minmaxWeightIndices[1]];
-
-      var weightDiffMat, maxWeightDiff;
-      var G = new R.Graph(false);
-      weightDiffMat = G.sub(oldMat, mat);
-      weightDiffMat = G.eltmul(weightDiffMat, weightDiffMat);
-
-      self.diffTrackingMats[key] = G.add(weightDiffMat, self.diffTrackingMats[key]);
-
-      var maxWeightDiffIndex = R.maxi(weightDiffMat.w);
-      maxWeightDiff = Math.max(weightDiffMat.w[maxWeightDiffIndex], self.diffTrackSensitivity);
-
-      for (var row = 0; row < mat.n; row++) {
-        for (var col = 0; col < mat.d; col++) {
-          var weight = mat.get(row, col);
-
-          ctx.fillStyle = self.getActivationColor(minWeight, maxWeight, weight);
-          ctx.fillRect(col * self.pixelWidth, row * self.pixelHeight, self.pixelWidth, self.pixelHeight);
-
-          if (self.showDiffs) {
-            var weightDiff = self.diffTrackingMats[key].get(row, col);
-
-            ctx.fillStyle = self.getFocusColor(0, maxWeightDiff, weightDiff);
-            ctx.fillRect(col * self.pixelWidth, row * self.pixelHeight, self.pixelWidth, self.pixelHeight);
-          }
-        }
-      }
+      self.renderMat(key, self.canvases[key], self.pixelWidth, self.pixelHeight);
+      self.renderZoomCanvas();
 
       for (var i = 0; i < self.diffTrackingMats[key].w.length; i++) {
         self.diffTrackingMats[key].w[i] *= self.diffTrackDecayRate;
       }
 
-      self.oldMats[key] = mat.clone();
+      self.oldMats[key] = self.model[key].clone();
     });
+
+  },
+  renderMat: function(key, canvas, pixelWidth, pixelHeight) {
+    var self = this;
+
+    var mat = self.model[key];
+    var oldMat = self.oldMats[key];
+    var ctx = canvas.getContext('2d');
+
+    var minmaxWeightIndices = R.minmaxi(mat.w);
+    var minWeight = mat.w[minmaxWeightIndices[0]];
+    var maxWeight = mat.w[minmaxWeightIndices[1]];
+
+    var weightDiffMat, maxWeightDiff;
+    var G = new R.Graph(false);
+    weightDiffMat = G.sub(oldMat, mat);
+    weightDiffMat = G.eltmul(weightDiffMat, weightDiffMat);
+
+    self.diffTrackingMats[key] = G.add(weightDiffMat, self.diffTrackingMats[key]);
+
+    var maxWeightDiffIndex = R.maxi(weightDiffMat.w);
+    maxWeightDiff = Math.max(weightDiffMat.w[maxWeightDiffIndex], self.diffTrackSensitivity);
+
+    for (var row = 0; row < mat.n; row++) {
+      for (var col = 0; col < mat.d; col++) {
+        var weight = mat.get(row, col);
+
+        ctx.fillStyle = self.getActivationColor(minWeight, maxWeight, weight);
+        ctx.fillRect(col * pixelWidth, row * pixelHeight, pixelWidth, pixelHeight);
+
+        if (self.showDiffs) {
+          var weightDiff = self.diffTrackingMats[key].get(row, col);
+
+          ctx.fillStyle = self.getFocusColor(0, maxWeightDiff, weightDiff);
+          ctx.fillRect(col * pixelWidth, row * pixelHeight, pixelWidth, pixelHeight);
+        }
+      }
+    }
+  },
+  renderZoomCanvas: function () {
+    var self = this;
+    var zoomSourceCanvas = self.canvases[self.zoomedKey];
+    self.zoomCanvas.width = zoomSourceCanvas.width * Math.round(self.zoomPixelWidth / self.pixelWidth);
+    self.zoomCanvas.height = zoomSourceCanvas.height * Math.round(self.zoomPixelHeight / self.pixelHeight);
+
+    self.renderMat(self.zoomedKey, self.zoomCanvas, self.zoomPixelWidth, self.zoomPixelHeight);
   },
   getActivationColor: function (min, max, value) {
     var hue, saturation, lightness;

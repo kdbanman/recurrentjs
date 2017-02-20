@@ -64,52 +64,50 @@ clipval = 5.0; // clip gradients at this value</textarea>
     <div class="col-md-6">
       <div class="panel panel-default">
         <div class="panel-body">
-          <div class="sliderContainer">
+          <div>
             <input id="learning_rate_slider" type="text"></input>
             <span class="marginLeft-5">Learning Rate</span>
           </div>
 
-          <div class="sliderContainer marginTop-5">
+          <div class="marginTop-5">
             <input id="diff_track_toggle"
                    type="text"/>
             <span class="marginLeft-5">Highlight Weight Changes</span>
           </div>
 
-          <div class="sliderContainer marginTop-5">
+          <div class="marginTop-5">
             <input id="diff_track_sensitivity_slider" type="text"></input>
             <span class="marginLeft-5">Weight Change Highlight Threshold</span>
           </div>
 
-          <div class="sliderContainer marginTop-5">
+          <div class="marginTop-5">
             <input id="render_period_slider" type="text"></input>
             <span class="marginLeft-5">Training Cycles Per Render</span>
           </div>
+
+          <div class="marginTop-5">
+            <button class="btn btn-default" id="js-reinitialize_weights">
+              <span class="glyphicon glyphicon-repeat"></span>
+              Reinitialize
+            </button>
+
+            <button class="btn btn-default" id="js-train_once">
+              <span class="glyphicon glyphicon-step-forward"></span>
+              Train Once
+            </button>
+
+            <button class="btn btn-default" id="js-train_continuously">
+              <span class="glyphicon glyphicon-play"></span>
+              Train Continuously
+            </button>
+
+            <button class="btn btn-default" id="js-pause_training">
+              <span class="glyphicon glyphicon-pause"></span>
+              Pause
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <div class="row marginBottom-4">
-    <div class="col-md-12">
-      <button class="btn btn-default" id="js-reinitialize_weights">
-        <span class="glyphicon glyphicon-repeat"></span>
-        Reinitialize
-      </button>
-
-      <button class="btn btn-default" id="js-train_once">
-        <span class="glyphicon glyphicon-step-forward"></span>
-        Train Once
-      </button>
-
-      <button class="btn btn-default" id="js-train_continuously">
-        <span class="glyphicon glyphicon-play"></span>
-        Train Continuously
-      </button>
-
-      <button class="btn btn-default" id="js-pause_training">
-        <span class="glyphicon glyphicon-pause"></span>
-        Pause
-      </button>
     </div>
   </div>
 
@@ -123,10 +121,30 @@ clipval = 5.0; // clip gradients at this value</textarea>
     </div>
   </div>
 
-  <canvas id="perplexity_graph"></canvas>
-  <div>Training Pass Time: <span id="time_per_tick"></span></div>
-  <div>Epoch: <span id="epoch"></span></div>
-  <div>Perplexity: <span id="last_tick_perplexity"></span></div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div id="js-weights_visualization_zoom"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <span>
+            <canvas id="perplexity_graph"></canvas>
+          </span>
+          <span>
+            <div>Training Pass Time: <span id="time_per_tick"></span></div>
+            <div>Epoch: <span id="epoch"></span></div>
+            <div>Perplexity: <span id="last_tick_perplexity"></span></div>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div>
 
