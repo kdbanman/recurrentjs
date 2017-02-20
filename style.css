@@ -21,8 +21,29 @@ canvas {
 }
 
 .btn:focus,
-#js-initialization_code:focus {
-  outline: none;
+input:focus,
+label:focus,
+span:focus,
+#js-initialization_code:focus,
+.focus {
+  outline: none !important;
+  background-color: none !important;
+  border-color: none !important;
+  color: none !important;
+}
+
+.btn span.glyphicon {
+	opacity: 0;
+}
+
+.btn.active span.glyphicon {
+	opacity: 1;
+}
+
+.slider-handle {
+  background-color: #337ab7;
+  border-color: #2e6da4;
+  background-image: none;
 }
 
 #js-weights_visualization {

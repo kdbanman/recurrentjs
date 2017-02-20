@@ -1,8 +1,9 @@
-var learnIntervalId = null;
-var weightsComponent = null;
-var learnCountSinceRender = 0;
-var renderPeriod = 1;
+
 $(function () {
+  var learnIntervalId = null;
+  var weightsComponent = null;
+  var learnCountSinceRender = 0;
+  var renderPeriod = 1;
 
   var reinitLearningRateSlider = function () {
     // note that learning_rate is a global variable
@@ -20,6 +21,7 @@ $(function () {
   };
 
   var reinitializeUI = function () {
+    reinitGlobals();
     reinit();
     reinitLearningRateSlider();
     perplexityGraph = new Rvis.Graph();

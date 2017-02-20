@@ -24,3 +24,8 @@ var epochSize = -1;
 var perplexityGraph = new Rvis.Graph();
 var perplexityHistory = [];
 var currentTick = 0;
+
+var reinitGlobals = function () {
+  // TODO read from controls
+  eval($("#js-initialization_code").val());
+}

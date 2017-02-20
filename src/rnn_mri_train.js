@@ -59,10 +59,7 @@ var initModel = function () {
 }
 
 var reinit = function () {
-  // note: reinit writes global vars
-
-  // eval options to set some globals
-  eval($("#js-initialization_code").val());
+  // note: reinit reads from global vars
 
   solver = new R.Solver();
 
