@@ -49,21 +49,6 @@
     <div class="col-md-6">
       <div class="panel panel-default">
         <div class="panel-body">
-          <textarea id="js-initialization_code">
-generator = 'lstm'; // can be 'rnn' or 'lstm'
-hidden_sizes = [20, 10]; // list of sizes of hidden layers
-letter_size = 5; // size of letter embeddings
-
-regc = 0.000001; // L2 regularization strength
-learning_rate = 0.01;
-clipval = 5.0; // clip gradients at this value</textarea>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-6">
-      <div class="panel panel-default">
-        <div class="panel-body">
           <div>
             <input id="learning_rate_slider" type="text"></input>
             <span class="marginLeft-5">Learning Rate</span>
@@ -106,6 +91,21 @@ clipval = 5.0; // clip gradients at this value</textarea>
               Pause
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <textarea id="js-initialization_code">
+generator = 'lstm'; // can be 'rnn' or 'lstm'
+hidden_sizes = [20, 10]; // list of sizes of hidden layers
+letter_size = 5; // size of letter embeddings
+
+regc = 0.000001; // L2 regularization strength
+learning_rate = 0.01;
+clipval = 5.0; // clip gradients at this value</textarea>
         </div>
       </div>
     </div>
