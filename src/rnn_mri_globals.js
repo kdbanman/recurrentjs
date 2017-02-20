@@ -22,5 +22,5 @@ var epochSize = -1;
 
 // historical state and graph
 var perplexityGraph = new Rvis.Graph();
-var perplexityHitory = [];
+var perplexityHistory = [];
 var currentTick = 0;

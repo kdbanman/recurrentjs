@@ -1,7 +1,8 @@
 
 var WeightsComponent = function (options) {
 
-  this.pixelSize = options.pixelSize || 10;
+  this.pixelHeight = options.pixelHeight || 10;
+  this.pixelWidth = options.pixelWidth || 5;
   this.positiveActivationHue = options.positiveActivationHue || 190;
   this.negativeActivationHue = options.negativeActivationHue || 6;
   this.positiveActivationSaturation = options.positiveActivationSaturation || 100;
@@ -44,8 +45,8 @@ WeightsComponent.prototype = {
       var colCount = mat.d;
 
       var canvas = document.createElement('canvas');
-      canvas.height = rowCount * self.pixelSize;
-      canvas.width = colCount * self.pixelSize;
+      canvas.height = rowCount * self.pixelHeight;
+      canvas.width = colCount * self.pixelWidth;
 
       self.parentElement.append(canvas);
 
@@ -79,13 +80,13 @@ WeightsComponent.prototype = {
           var weight = mat.get(row, col);
 
           ctx.fillStyle = self.getActivationColor(minWeight, maxWeight, weight);
-          ctx.fillRect(col * self.pixelSize, row * self.pixelSize, self.pixelSize, self.pixelSize);
+          ctx.fillRect(col * self.pixelWidth, row * self.pixelHeight, self.pixelWidth, self.pixelHeight);
 
           if (self.showDiffs) {
             var weightDiff = self.diffTrackingMats[key].get(row, col);
 
             ctx.fillStyle = self.getFocusColor(0, maxWeightDiff, weightDiff);
-            ctx.fillRect(col * self.pixelSize, row * self.pixelSize, self.pixelSize, self.pixelSize);
+            ctx.fillRect(col * self.pixelWidth, row * self.pixelHeight, self.pixelWidth, self.pixelHeight);
           }
         }
       }

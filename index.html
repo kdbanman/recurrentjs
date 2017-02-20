@@ -5,14 +5,13 @@
 
   <title>RNN MRI</title>
 
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/css/bootstrap-slider.css" integrity="sha256-WX5auLjOHpsee7v+gRMOUmhxs0GRvp7cToOfr00LoBI=" crossorigin="anonymous" />
-
+  <link rel="stylesheet" href="https://cdn.rawgit.com/kdbanman/spacing/d12844ed/spacing.css" integrity="sha384-ah9V9uMwTlNJy465+gA7rluMqx8htBIWbynD17zQ4m8lwHYaQad6lTYk7J434ZoT" crossorigin="anonymous" />
   <link rel="stylesheet" href="style.css">
 
-  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.7.2/bootstrap-slider.js" integrity="sha256-u9WmKX0xDjTHY993hjdYILt3bALMMcLiTCrWmsZ/o7g=" crossorigin="anonymous"></script>
 
   <script src="external/recurrent.js"></script>
@@ -31,74 +30,103 @@
 
   <h1>RNN MRI</h1>
 
-  <div id="about">
-    RNN MRI is a tool that visualizes the internal dynamics of a character-lever Recurrent Neural Network (RNN) during training, prediction, and generation.
-    See <a>Andrej Karpathy's wonderful article on character-level RNNs</a> to learn more about the network you see visualized.<br><br>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          RNN MRI is a tool that visualizes the internal dynamics of a character-lever Recurrent Neural Network (RNN) during training, prediction, and generation.
+          See <a>Andrej Karpathy's wonderful article on character-level RNNs</a> to learn more about the network you see visualized.<br><br>
 
-    The demo is pre-filled with URLs that point to images, as scraped from some StackOverflow pages.  Fill it with different data and retrain if you wish.<br><br>
+          The demo is pre-filled with URLs that point to images, as scraped from some StackOverflow pages.  Fill it with different data and retrain if you wish.<br><br>
+        </div>
+      </div>
+    </div>
   </div>
 
   <h2>Training</h2>
 
-  <textarea id="js-initialization_code" style="width:100%; height:200px;">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <textarea id="js-initialization_code">
 generator = 'lstm'; // can be 'rnn' or 'lstm'
 hidden_sizes = [20, 10]; // list of sizes of hidden layers
 letter_size = 5; // size of letter embeddings
 
 regc = 0.000001; // L2 regularization strength
 learning_rate = 0.01;
-clipval = 5.0; // clip gradients at this value
-  </textarea><br />
+clipval = 5.0; // clip gradients at this value</textarea>
+        </div>
+      </div>
+    </div>
 
-  <button class="btn btn-default" id="js-reinitialize_weights">
-    <span class="glyphicon glyphicon-repeat"></span>
-    Reinitialize
-  </button>
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div class="sliderContainer">
+            <input id="learning_rate_slider" type="text"></input>
+            <span class="marginLeft-5">Learning Rate</span>
+          </div>
 
-  <button class="btn btn-default" id="js-train_once">
-    <span class="glyphicon glyphicon-step-forward"></span>
-    Train Once
-  </button>
+          <div class="sliderContainer marginTop-5">
+            <input id="diff_track_toggle"
+                   type="text"/>
+            <span class="marginLeft-5">Highlight Weight Changes</span>
+          </div>
 
-  <button class="btn btn-default" id="js-train_continuously">
-    <span class="glyphicon glyphicon-play"></span>
-    Train Continuously
-  </button>
+          <div class="sliderContainer marginTop-5">
+            <input id="diff_track_sensitivity_slider" type="text"></input>
+            <span class="marginLeft-5">Weight Change Highlight Threshold</span>
+          </div>
 
-  <button class="btn btn-default" id="js-pause_training">
-    <span class="glyphicon glyphicon-pause"></span>
-    Pause
-  </button>
-
-  <div>
-    <input id="learning_rate_slider" type="text"></input>
-    <span>Learning Rate</span>
+          <div class="sliderContainer marginTop-5">
+            <input id="render_period_slider" type="text"></input>
+            <span class="marginLeft-5">Training Cycles Per Render</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div>
-    <input id="diff_track_toggle"
-           type="text"
-           data-provide="slider"
-           data-slider-ticks="[0, 1]"
-           data-slider-min="0"
-           data-slider-max="1"
-           data-slider-step="1"
-           data-slider-value="0"
-           data-slider-tooltip="hide"/>
-    <span>Highlight Diffs</span>
+  <div class="row marginBottom-4">
+    <div class="col-md-12">
+      <button class="btn btn-default" id="js-reinitialize_weights">
+        <span class="glyphicon glyphicon-repeat"></span>
+        Reinitialize
+      </button>
+
+      <button class="btn btn-default" id="js-train_once">
+        <span class="glyphicon glyphicon-step-forward"></span>
+        Train Once
+      </button>
+
+      <button class="btn btn-default" id="js-train_continuously">
+        <span class="glyphicon glyphicon-play"></span>
+        Train Continuously
+      </button>
+
+      <button class="btn btn-default" id="js-pause_training">
+        <span class="glyphicon glyphicon-pause"></span>
+        Pause
+      </button>
+    </div>
   </div>
 
-  <div>
-    <input id="diff_track_sensitivity_slider" type="text"></input>
-    <span>Diff Highlight Threshold</span>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div id="js-weights_visualization"></div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div id="js-weights_visualization"></div>
 
   <canvas id="perplexity_graph"></canvas>
-  <div id="time_per_tick"></div>
-  <div id="epoch"></div>
-  <div id="last_tick_perplexity"></div>
+  <div>Training Pass Time: <span id="time_per_tick"></span></div>
+  <div>Epoch: <span id="epoch"></span></div>
+  <div>Perplexity: <span id="last_tick_perplexity"></span></div>
 
   <div>
 

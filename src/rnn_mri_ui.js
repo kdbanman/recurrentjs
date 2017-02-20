@@ -1,5 +1,7 @@
 var learnIntervalId = null;
 var weightsComponent = null;
+var learnCountSinceRender = 0;
+var renderPeriod = 1;
 $(function () {
 
   var reinitLearningRateSlider = function () {
@@ -20,11 +22,30 @@ $(function () {
   var reinitializeUI = function () {
     reinit();
     reinitLearningRateSlider();
+    perplexityGraph = new Rvis.Graph();
+    perplexityGraph.drawSelf(document.getElementById("perplexity_graph"));
+
+    learnCountSinceRender = 0;
   };
 
   var learnOnce = function () {
-    tick();
-    weightsComponent.render();
+    var tick_time = tick();
+    learnCountSinceRender++;
+
+    if (learnCountSinceRender >= renderPeriod) {
+      learnCountSinceRender = 0;
+
+      weightsComponent.render();
+
+      var median_perplexity = median(perplexityHistory);
+      perplexityGraph.add(currentTick, median_perplexity);
+      perplexityGraph.drawSelf(document.getElementById("perplexity_graph"));
+
+      $('#epoch').text((currentTick / epochSize).toFixed(2));
+      $('#last_tick_perplexity').text(perplexityHistory[perplexityHistory.length - 1].toFixed(2));
+      $('#time_per_tick').text(tick_time.toFixed(1) + 'ms');
+      perplexityHistory = [];
+    }
   };
 
   var isLearning = function () {
@@ -90,10 +111,20 @@ $(function () {
   weightsComponent = new WeightsComponent({
     model: model,
     parentElement: $('#js-weights_visualization'),
-    pixelSize: 8
+    pixelHeight: 4,
+    pixelWidth: 4
   });
 
-  $("#diff_track_toggle").change(function (evt) {
+  $("#diff_track_toggle").slider({
+    min: 0,
+    max: 1,
+    ticks: [0, 1],
+    step: 1,
+    value: 0,
+    formatter: function (value) {
+      return value === 1 ? "On" : "Off";
+    }
+  }).change(function (evt) {
     weightsComponent.showDiffs = evt.target.value === "1";
   });
 
@@ -107,5 +138,14 @@ $(function () {
     }
   }).on("slide", function (evt) {
     weightsComponent.diffTrackSensitivity = Math.pow(10, evt.value);
+  });
+
+  $("#render_period_slider").slider({
+    min: 1,
+    max: 100,
+    step: 1,
+    value: 1,
+  }).on("slide", function (evt) {
+    renderPeriod = evt.value;
   });
 });

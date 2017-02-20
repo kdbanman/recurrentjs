@@ -64,10 +64,9 @@ var reinit = function () {
   // eval options to set some globals
   eval($("#js-initialization_code").val());
 
-  solver = new R.Solver(); // reinit solver
-  perplexityGraph = new Rvis.Graph();
+  solver = new R.Solver();
 
-  perplexityHitory = [];
+  perplexityHistory = [];
   currentTick = 0;
 
   // process the input, filter out blanks
@@ -158,21 +157,9 @@ var tick = function () {
   var t1 = +new Date();
   var tick_time = t1 - t0;
 
-  perplexityHitory.push(cost_struct.perplexity);
+  perplexityHistory.push(cost_struct.perplexity);
 
-  // evaluate now and then
   currentTick += 1;
-  if(currentTick % 10 === 0) {
-    // keep track of perplexity
-    $('#epoch').text('epoch: ' + (currentTick/epochSize).toFixed(2));
-    $('#last_tick_perplexity').text('perplexity: ' + cost_struct.perplexity.toFixed(2));
-    $('#time_per_tick').text('forw/bwd time per example: ' + tick_time.toFixed(1) + 'ms');
 
-    if(currentTick % 100 === 0) {
-      var median_perplexity = median(perplexityHitory);
-      perplexityHitory = [];
-      perplexityGraph.add(currentTick, median_perplexity);
-      perplexityGraph.drawSelf(document.getElementById("perplexity_graph"));
-    }
-  }
+  return tick_time;
 }

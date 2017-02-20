@@ -1,14 +1,37 @@
+.clearfix:after {
+  content: " ";
+  display: table;
+  clear: both;
+}
+
+#js-initialization_code {
+  width: 100%;
+  height: 18rem;
+  font-family: monospace;
+  border: none;
+  resize: none;
+}
+
+.btn:focus,
+#js-initialization_code:focus {
+  outline: none;
+}
+
 #js-weights_visualization {
   display: flex;
   align-items: center;
+}
+
+#js-weights_visualization canvas {
+  margin: 2px;
+}
+
+#js-weights_visualization canvas:hover {
+  box-shadow: 2px 2px 2px #888;
 }
 
 .generated_sample {
   padding: 0.5rem;
   white-space: nowrap;
   overflow: hidden;
-}
-
-canvas {
-  margin: 1px;
 }
