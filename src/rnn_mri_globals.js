@@ -26,6 +26,12 @@ var perplexityHistory = [];
 var currentTick = 0;
 
 var reinitGlobals = function () {
-  // TODO read from controls
-  eval($("#js-initialization_code").val());
+  generator = $("#useLSTM").is(":checked") ? "lstm" : "rnn";
+
+  hidden_sizes = eval($("#hidden_layer_sizes").val());
+
+  learning_rate = Math.pow(10, $("#learning_rate_slider").slider("getValue"));
+  letter_size = $("#letter_embedding_size_slider").slider("getValue");
+  regc = Math.pow(10, $("#regularization_strength_slider").slider("getValue"));
+  clipval = $("#letter_embedding_size_slider").slider("getValue");
 }

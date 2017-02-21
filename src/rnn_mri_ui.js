@@ -1,29 +1,20 @@
 
 $(function () {
+
+
+  // UI GLOBALS
+
   var learnIntervalId = null;
   var weightsComponent = null;
   var learnCountSinceRender = 0;
   var renderPeriod = 1;
 
-  var reinitLearningRateSlider = function () {
-    // note that learning_rate is a global variable
-    $("#learning_rate_slider").slider({
-      min: Math.log10(0.01) - 3.0,
-      max: Math.log10(0.01) + 0.05,
-      step: 0.05,
-      value: Math.log10(learning_rate),
-      formatter: function (value) {
-        return Math.pow(10, value).toPrecision(3);
-      }
-    }).on("slide", function (evt) {
-      learning_rate = Math.pow(10, evt.value);
-    })
-  };
+
+  // UI FUNCTIONS
 
   var reinitializeUI = function () {
     reinitGlobals();
     reinit();
-    reinitLearningRateSlider();
     perplexityGraph = new Rvis.Graph();
     perplexityGraph.drawSelf(document.getElementById("perplexity_graph"));
 
@@ -67,6 +58,9 @@ $(function () {
     learnIntervalId = null;
   };
 
+
+  // BUTTON CALLBACKS
+
   $('#js-reinitialize_weights').click(function () {
     stopLearning();
     reinitializeUI();
@@ -95,17 +89,53 @@ $(function () {
     }
   });
 
-  $("#temperature_slider").slider({
-    min: -1,
-    max: 1.05,
+
+  // HYPERPARAMETER SLIDER DECLARATIONS
+
+  $("#learning_rate_slider").slider({
+    min: Math.log10(0.01) - 3.0,
+    max: Math.log10(0.01) + 0.05,
     step: 0.05,
-    value: 0,
+    value: Math.log10(0.01),
     formatter: function (value) {
       return Math.pow(10, value).toPrecision(3);
     }
   }).on("slide", function (evt) {
-    sampleSoftmaxTemperature = Math.pow(10, evt.value);
+    learning_rate = Math.pow(10, evt.value);
   });
+
+  $("#letter_embedding_size_slider").slider({
+    min: 1,
+    max: 10,
+    step: 1,
+    value: 5,
+  }).on("slide", function (evt) {
+    letter_size = evt.value;
+  });
+
+  $("#regularization_strength_slider").slider({
+    min: Math.log10(0.01) - 5.0,
+    max: Math.log10(0.01) + 0.05,
+    step: 0.05,
+    value: Math.log10(0.000001),
+    formatter: function (value) {
+      return Math.pow(10, value).toPrecision(3);
+    }
+  }).on("slide", function (evt) {
+    regc = Math.pow(10, evt.value);
+  });
+
+  $("#grad_clip_threshold_slider").slider({
+    min: 0.1,
+    max: 10,
+    value: 5,
+    formatter: function (value) {
+      return value.toPrecision(2);
+    }
+  }).on("slide", function (evt) {
+    clipval = evt.value;
+  });
+
 
   // MAIN ENTRY POINT
   // Initialize the network
@@ -119,6 +149,9 @@ $(function () {
     zoomPixelHeight: 8,
     zoomPixelWidth: 8,
   });
+
+
+  // VISUALIZATION SLIDER DECLARATIONS
 
   $("#diff_track_toggle").slider({
     min: 0,
@@ -152,5 +185,17 @@ $(function () {
     value: 1,
   }).on("slide", function (evt) {
     renderPeriod = evt.value;
+  });
+
+  $("#temperature_slider").slider({
+    min: -1,
+    max: 1.05,
+    step: 0.05,
+    value: 0,
+    formatter: function (value) {
+      return Math.pow(10, value).toPrecision(3);
+    }
+  }).on("slide", function (evt) {
+    sampleSoftmaxTemperature = Math.pow(10, evt.value);
   });
 });
