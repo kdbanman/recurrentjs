@@ -42,7 +42,7 @@ var generateSentence = function (model, sampleDistribution, samplingTemperature)
     var letter = indexToCharacter[currentIndex];
     sentence += letter;
   }
-  return { sentence: sentence, networkHistory: networkHistory };
+  return { sentence: sentence, internalStateHistory: networkHistory };
 }
 
 var sampleNetwork = function () {
