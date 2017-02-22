@@ -49,7 +49,7 @@ canvas {
 #js-weights_visualization canvas {
   margin: 2px;
   box-shadow: 2px 2px 2px #888;
-  opacity: 0.9;
+  opacity: 0.93;
 }
 
 #js-weights_visualization canvas:hover {
@@ -60,6 +60,10 @@ canvas {
 #js-weights_visualization_zoom {
   display: flex;
   justify-content: center;
+}
+
+#js-weights_visualization_zoom canvas {
+  box-shadow: 3px 3px 3px #888;
 }
 
 .generated_sample {

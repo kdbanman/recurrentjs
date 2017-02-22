@@ -165,6 +165,8 @@
   <div class="row">
     <div class="col-md-12">
       <div class="panel panel-default">
+        <div class="panel-heading">Learned Weight Matrices</div>
+
         <div class="panel-body">
           <div id="js-weights_visualization"></div>
         </div>
@@ -175,6 +177,8 @@
   <div class="row">
     <div class="col-md-6">
       <div class="panel panel-default">
+        <div class="panel-heading">Learned Matrix Zoom</div>
+
         <div class="panel-body">
           <div id="js-weights_visualization_zoom"></div>
         </div>
@@ -183,56 +187,91 @@
 
     <div class="col-md-6">
       <div class="panel panel-default">
+        <div class="panel-heading">Training Stats</div>
         <div class="panel-body">
-          <span>
-            <canvas id="perplexity_graph"></canvas>
-          </span>
-          <span>
-            <div>Training Pass Time: <span id="time_per_tick"></span></div>
-            <div>Epoch: <span id="epoch"></span></div>
-            <div>Perplexity: <span id="last_tick_perplexity"></span></div>
-          </span>
+          <canvas id="perplexity_graph"></canvas>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-sm-4">Training Pass Time:</div> <div class="col-sm-8" id="time_per_tick"></div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-sm-4">Epoch:</div> <div class="col-sm-8" id="epoch"></div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-sm-4">Perplexity:</div> <div class="col-sm-8" id="last_tick_perplexity"></div>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
   </div>
 
-  <div>
 
-    <h2>Generation</h2>
+  <h2>Generation</h2>
 
-    <div>
-      <span>Softmax sample temperature:</span>
-      <input id="temperature_slider" type="text"></input>
-    </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">Generation Controls</div>
 
-    <button class="btn btn-default" id="sample_network">Generate Samples</button>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-xs-6">
+          <ul class="list-group">
 
-    <div class="row">
-      <div class="col-sm-6">
-        <h4>Softmax distribution generation:</h4>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-sm-6">Softmax sample temperature:</div>
+                <div class="col-sm-6"><input id="temperature_slider" type="text"></input></div>
+              </div>
+            </li>
 
-        <div id="hot_samples">
-          <div class="generated_sample"><samp>---</samp></div>
-          <div class="generated_sample"><samp>---</samp></div>
-          <div class="generated_sample"><samp>---</samp></div>
-          <div class="generated_sample"><samp>---</samp></div>
-          <div class="generated_sample"><samp>---</samp></div>
-        </div>
-      </div>
+          </ul>
 
-      <div class="col-sm-6">
-        <h4>Greedy argmax generation:</h4>
+          <button class="btn btn-default" id="sample_network">Generate Samples</button>
 
-        <div id="argmax_samples">
-          <div class="generated_sample"><samp>---</samp></div>
-          <div class="generated_sample"><samp>---</samp></div>
-          <div class="generated_sample"><samp>---</samp></div>
-          <div class="generated_sample"><samp>---</samp></div>
-          <div class="generated_sample"><samp>---</samp></div>
         </div>
       </div>
     </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="panel panel-default">
+          <div class="panel-heading">Distribution Sample Results</div>
+
+          <div class="panel-body">
+            <div id="hot_samples">
+              <div class="generated_sample"><samp>---</samp></div>
+              <div class="generated_sample"><samp>---</samp></div>
+              <div class="generated_sample"><samp>---</samp></div>
+              <div class="generated_sample"><samp>---</samp></div>
+              <div class="generated_sample"><samp>---</samp></div>
+            </div>
+          </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">Greedy Argmax Sample Results</div>
+
+        <div class="panel-body">
+          <div id="argmax_samples">
+            <div class="generated_sample"><samp>---</samp></div>
+            <div class="generated_sample"><samp>---</samp></div>
+            <div class="generated_sample"><samp>---</samp></div>
+            <div class="generated_sample"><samp>---</samp></div>
+            <div class="generated_sample"><samp>---</samp></div>
+          </div>
+        </div>
+      </div>
+    </div>  
   </div>
 
   <div>
