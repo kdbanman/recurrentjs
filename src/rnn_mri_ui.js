@@ -6,6 +6,7 @@ $(function () {
 
   var learnIntervalId = null;
   var weightsComponent = null;
+  var generationComponent = null;
   var learnCountSinceRender = 0;
   var renderPeriod = 1;
 
@@ -74,15 +75,8 @@ $(function () {
     var shouldRestart = isLearning();
     stopLearning();
 
-    $('#hot_samples .generated_sample').last().remove();
-    var generatedSentence = sampleNetwork();
-    var generatedSentenceDiv = '<div class="generated_sample"><samp>'+generatedSentence+'</samp></div>'
-    $('#hot_samples').prepend(generatedSentenceDiv);
-
-    $('#argmax_samples .generated_sample').last().remove();
-    var argmaxGeneratedSentence = sampleNetworkGreedy();
-    var argmaxGeneratedSentenceDiv = '<div class="generated_sample"><samp>'+argmaxGeneratedSentence+'</samp></div>'
-    $('#argmax_samples').prepend(argmaxGeneratedSentenceDiv);
+    generationComponent.addDistributionSample(sampleNetwork());
+    generationComponent.addArgmaxSample(sampleNetworkGreedy());
 
     if (shouldRestart) {
       startLearning();
@@ -149,7 +143,11 @@ $(function () {
     zoomPixelHeight: 8,
     zoomPixelWidth: 8,
   });
-
+  generationComponent = new GenerationComponent({
+    distributionElement: $("#hot_samples"),
+    argmaxElement: $("#argmax_samples"),
+    inspectorElement: $("#generation_inspector")
+  });
 
   // VISUALIZATION SLIDER DECLARATIONS
 

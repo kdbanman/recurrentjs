@@ -47,10 +47,10 @@ var generateSentence = function (model, sampleDistribution, samplingTemperature)
 
 var sampleNetwork = function () {
   var generationResult = generateSentence(model, true, sampleSoftmaxTemperature);
-  return generationResult.sentence;
+  return generationResult;
 }
 
 var sampleNetworkGreedy = function () {
   var generationResult = generateSentence(model, false);
-  return generationResult.sentence;
+  return generationResult;
 }

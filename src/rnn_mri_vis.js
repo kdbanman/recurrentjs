@@ -162,3 +162,56 @@ WeightsComponent.prototype = {
     return 'rgba(255,255,255,' + alphaVal + ')';
   }
 }
+
+
+var GenerationComponent = function (options) {
+  this.sampleCount = options.sampleCount || 8;
+
+  this.distributionElement = options.distributionElement;
+  this.argmaxElement = options.argmaxElement;
+  this.inspectorElement = options.inspectorElement;
+
+  for (var i = 0; i < this.sampleCount; i++) {
+    var distributionSampleElement = this.newGeneratedSampleElement();
+    var argmaxSampleElement = this.newGeneratedSampleElement();
+
+    this.distributionElement.append(distributionSampleElement);
+    this.argmaxElement.append(argmaxSampleElement)
+  }
+}
+
+GenerationComponent.prototype = {
+  addDistributionSample: function (networkHistory) {
+    this.cycleSampleCollection(this.distributionElement, networkHistory)
+  },
+  addArgmaxSample: function (networkHistory) {
+    this.cycleSampleCollection(this.argmaxElement, networkHistory)
+  },
+  cycleSampleCollection: function (collectionElement, networkHistory) {
+    collectionElement.children().last().remove()
+    collectionElement.prepend(this.newGeneratedSampleElement(networkHistory));
+  },
+  newGeneratedSampleElement: function (networkHistory) {
+    var self = this;
+
+    var sequenceString = networkHistory == null ? "---" : networkHistory.sentence;
+
+    var sampleElement = $.parseHTML('<li class="list-group-item generated_sample"><samp>' + sequenceString + '</samp></li>');
+
+    if (networkHistory != null) {
+      var inspectorCanvas = document.createElement('canvas');
+      var ctx = inspectorCanvas.getContext("2d");
+
+      // TODO draw stuff in a different function
+
+      $(sampleElement).mouseenter(function (evt) {
+        self.inspectorElement.children().remove();
+        self.inspectorElement.append(inspectorCanvas);
+      });
+    }
+    return sampleElement;
+  },
+  newBlankSampleArray: function (length) {
+    return Array.apply(null, Array(length)).map(function () {});
+  }
+}
