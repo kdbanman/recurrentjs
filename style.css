@@ -25,7 +25,8 @@ canvas {
 }
 
 .btn-checkbox span.glyphicon {
-	opacity: 0.1;
+  margin-top: 2px;
+  opacity: 0.1;
   color: black;
 }
 
@@ -47,10 +48,13 @@ canvas {
 
 #js-weights_visualization canvas {
   margin: 2px;
+  box-shadow: 2px 2px 2px #888;
+  opacity: 0.9;
 }
 
 #js-weights_visualization canvas:hover {
-  box-shadow: 2px 2px 2px #888;
+  box-shadow: 2px 2px 2px #666;
+  opacity: 1;
 }
 
 #js-weights_visualization_zoom {

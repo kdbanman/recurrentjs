@@ -34,6 +34,8 @@ WeightsComponent.prototype = {
         self.diffTrackingMats[key] = undefined;
         self.oldMats[key] = undefined;
       });
+
+      self.zoomCanvas.remove();
     }
 
     self.canvases = {};
