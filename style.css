@@ -66,6 +66,10 @@ canvas {
   overflow: hidden;
 }
 
+.generated_sample:hover {
+	background-color: #f5f5f5;
+}
+
 #generation_inspector {
 	overflow: hidden;
 }

@@ -167,9 +167,16 @@ WeightsComponent.prototype = {
 var GenerationComponent = function (options) {
   this.sampleCount = options.sampleCount || 8;
 
-  this.inspectorPixelSize = options.inspectorPixelSize || 15;
-  this.smallGapSize = options.smallGapSize || 5;
-  this.largeGapSize = options.largeGapSize || 25;
+  this.inspectorCharacterSize = options.inspectorCharacterSize || 12;
+  this.inspectorPixelSize = options.inspectorPixelSize || 8;
+  this.smallGapSize = options.smallGapSize || 4;
+  this.largeGapSize = options.largeGapSize || 15;
+
+  this.positiveActivationHue = options.positiveActivationHue || 190;
+  this.negativeActivationHue = options.negativeActivationHue || 6;
+  this.positiveActivationSaturation = options.positiveActivationSaturation || 100;
+  this.negativeActivationSaturation = options.negativeActivationSaturation || 70;
+  this.fullActivationBrightness = options.fullActivationBrightness || 70;
 
   this.distributionElement = options.distributionElement;
   this.argmaxElement = options.argmaxElement;
@@ -206,9 +213,18 @@ GenerationComponent.prototype = {
     var sampleElement = $.parseHTML('<li class="list-group-item generated_sample"><samp>' + sequenceString + '</samp></li>');
 
     if (networkHistory != null) {
-      var inspectorCanvas = self.renderSampleInspection(networkHistory);
+      var getInspectorCanvas = (function () {
+        var inspectorCanvas;
+        return function () {
+          if (inspectorCanvas == null) {
+            inspectorCanvas = self.renderSampleInspection(networkHistory);
+          }
+          return inspectorCanvas;
+        };
+      })();
 
       $(sampleElement).mouseenter(function (evt) {
+        var inspectorCanvas = getInspectorCanvas();
         self.inspectorElement.children().remove();
         self.inspectorElement.append(inspectorCanvas);
 
@@ -231,21 +247,25 @@ GenerationComponent.prototype = {
 
     var ctx = tmpInspectorCanvas.getContext("2d");
 
+    ctx.font = self.inspectorCharacterSize + "px monospace";
+    ctx.textBaseline = "top";
+
     var currentX = 0;
 
     var maxX = 0;
     var maxY = 0;
 
     // count to <= length so that the last character is rendered after the last state history entry
-    for (var stateIdx = 0; stateIdx <= networkHistory.internalStateHistory.length; stateIdx++) {
+    for (var stateIdx = 0; stateIdx < networkHistory.internalStateHistory.length; stateIdx++) {
       var currentY = 0;
 
-      if (stateIdx != 0) {
+      if (stateIdx !== 0) {
         var character = networkHistory.sentence[stateIdx - 1];
 
-        // TODO render character
+        ctx.fillStyle = "#000";
+        ctx.fillText(character, currentX, currentY);
 
-        if (stateIdx == networkHistory.internalStateHistory.length) {
+        if (stateIdx === networkHistory.internalStateHistory.length) {
           break;
         }
       }
@@ -288,8 +308,20 @@ GenerationComponent.prototype = {
   },
   renderActivations: function (layerActivations, ctx, currentX, currentY) {
     var self = this;
-    for (var activationIdx = 0; activationIdx < layerActivations.length; activationIdx++) {
-      ctx.fillStyle = "#" + ('00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6);
+
+    var activationIdx;
+    var minActivation = layerActivations[0];
+    var maxActivation = layerActivations[0];
+    for (activationIdx = 0; activationIdx < layerActivations.length; activationIdx++) {
+      if (layerActivations[activationIdx] > maxActivation) {
+        maxActivation = layerActivations[activationIdx];
+      } else if (layerActivations[activationIdx] < minActivation) {
+        minActivation = layerActivations[activationIdx];
+      }
+    }
+
+    for (activationIdx = 0; activationIdx < layerActivations.length; activationIdx++) {
+      ctx.fillStyle = self.getActivationColor(minActivation, maxActivation, layerActivations[activationIdx]);
       ctx.fillRect(currentX, currentY, self.inspectorPixelSize, self.inspectorPixelSize);
 
       currentY += self.inspectorPixelSize;
@@ -297,5 +329,30 @@ GenerationComponent.prototype = {
 
     currentY += self.smallGapSize;
     return currentY;
+  },
+  getActivationColor: function (min, max, value) {
+    var hue, saturation, lightness;
+    if (value < 0) {
+      hue = this.negativeActivationHue;
+      saturation = this.negativeActivationSaturation;
+    } else {
+      hue = this.positiveActivationHue;
+      saturation = this.negativeActivationSaturation;
+    }
+
+    if (min * max > 0) {
+      // signs are the same.
+      lightness = this.fullActivationBrightness * (max - value) / (max - min);
+    } else {
+      // signs differ: min is negative and max is positive.
+      var maxDisplacement = max > -1 * min ? max : -1 * min;
+      var absoluteValue = value > 0 ? value : -1 * value;
+      lightness = this.fullActivationBrightness * absoluteValue / maxDisplacement;
+    }
+
+    // round to nearest tenth
+    lightness = Math.round(lightness * 10) / 10;
+
+    return 'hsl(' + hue + ',' + saturation + '%,' + lightness + '%)';
   }
 }
