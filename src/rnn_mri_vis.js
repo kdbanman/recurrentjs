@@ -4,9 +4,6 @@ var WeightsComponent = function (options) {
   this.pixelHeight = options.pixelHeight || 5;
   this.pixelWidth = options.pixelWidth || 5;
 
-  this.zoomPixelHeight = options.zoomPixelHeight || 20;
-  this.zoomPixelWidth = options.zoomPixelWidth || 20;
-
   this.positiveActivationHue = options.positiveActivationHue || 190;
   this.negativeActivationHue = options.negativeActivationHue || 6;
   this.positiveActivationSaturation = options.positiveActivationSaturation || 100;
@@ -18,7 +15,6 @@ var WeightsComponent = function (options) {
   this.diffTrackSensitivity = options.diffTrackSensitivity || 100.0;
 
   this.parentElement = options.parentElement;
-  this.zoomElement = options.zoomElement;
 
   this.setNewModel(options.model);
 }
@@ -34,8 +30,6 @@ WeightsComponent.prototype = {
         self.diffTrackingMats[key] = undefined;
         self.oldMats[key] = undefined;
       });
-
-      self.zoomCanvas.remove();
     }
 
     self.canvases = {};
@@ -54,19 +48,11 @@ WeightsComponent.prototype = {
       var canvas = document.createElement('canvas');
       canvas.height = rowCount * self.pixelHeight;
       canvas.width = colCount * self.pixelWidth;
-      canvas.onmouseenter = function (evt) {
-        self.zoomedKey = key;
-        self.renderZoomCanvas();
-      };
 
       self.parentElement.append(canvas);
 
       self.canvases[key] = canvas;
     });
-
-    self.zoomCanvas = document.createElement('canvas');
-    self.zoomElement.append(self.zoomCanvas);
-    self.zoomedKey = self.keys[0];
 
     this.render();
   },
@@ -74,7 +60,6 @@ WeightsComponent.prototype = {
     var self = this;
     this.keys.forEach(function (key) {
       self.renderMat(key, self.canvases[key], self.pixelWidth, self.pixelHeight);
-      self.renderZoomCanvas();
 
       for (var i = 0; i < self.diffTrackingMats[key].w.length; i++) {
         self.diffTrackingMats[key].w[i] *= self.diffTrackDecayRate;
@@ -120,14 +105,6 @@ WeightsComponent.prototype = {
         }
       }
     }
-  },
-  renderZoomCanvas: function () {
-    var self = this;
-    var zoomSourceCanvas = self.canvases[self.zoomedKey];
-    self.zoomCanvas.width = zoomSourceCanvas.width * Math.round(self.zoomPixelWidth / self.pixelWidth);
-    self.zoomCanvas.height = zoomSourceCanvas.height * Math.round(self.zoomPixelHeight / self.pixelHeight);
-
-    self.renderMat(self.zoomedKey, self.zoomCanvas, self.zoomPixelWidth, self.zoomPixelHeight);
   },
   getActivationColor: function (min, max, value) {
     var hue, saturation, lightness;

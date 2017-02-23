@@ -47,20 +47,6 @@ canvas {
   opacity: 0.93;
 }
 
-#js-weights_visualization canvas:hover {
-  box-shadow: 2px 2px 2px #666;
-  opacity: 1;
-}
-
-#js-weights_visualization_zoom {
-  display: flex;
-  justify-content: center;
-}
-
-#js-weights_visualization_zoom canvas {
-  box-shadow: 3px 3px 3px #888;
-}
-
 .generated_sample {
   white-space: nowrap;
   overflow: hidden;

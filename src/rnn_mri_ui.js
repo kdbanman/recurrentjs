@@ -137,11 +137,8 @@ $(function () {
   weightsComponent = new WeightsComponent({
     model: model,
     parentElement: $('#js-weights_visualization'),
-    zoomElement: $('#js-weights_visualization_zoom'),
     pixelHeight: 4,
     pixelWidth: 4,
-    zoomPixelHeight: 8,
-    zoomPixelWidth: 8,
   });
   generationComponent = new GenerationComponent({
     distributionElement: $("#hot_samples"),
