@@ -145,7 +145,7 @@ var GenerationComponent = function (options) {
   this.sampleCount = options.sampleCount || 8;
 
   this.inspectorCharacterSize = options.inspectorCharacterSize || 12;
-  this.inspectorPixelSize = options.inspectorPixelSize || 8;
+  this.inspectorPixelSize = options.inspectorPixelSize || 7;
   this.smallGapSize = options.smallGapSize || 4;
   this.largeGapSize = options.largeGapSize || 15;
 

@@ -143,6 +143,32 @@
   </div>
 
   <div class="row">
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <div class="panel-heading">Training Stats</div>
+        <div class="panel-body">
+          <canvas id="perplexity_graph"></canvas>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-sm-4">Training Pass Time:</div> <div class="col-sm-8" id="time_per_tick"></div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-sm-4">Epoch:</div> <div class="col-sm-8" id="epoch"></div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-sm-4">Perplexity:</div> <div class="col-sm-8" id="last_tick_perplexity"></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <div class="col-md-8">
       <div class="panel panel-default">
         <div class="panel-heading">Visualization Controls</div>
@@ -176,32 +202,6 @@
               </div>
             </li>
 
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-heading">Training Stats</div>
-        <div class="panel-body">
-          <canvas id="perplexity_graph"></canvas>
-          <ul class="list-group">
-            <li class="list-group-item">
-              <div class="row">
-                <div class="col-sm-4">Training Pass Time:</div> <div class="col-sm-8" id="time_per_tick"></div>
-              </div>
-            </li>
-            <li class="list-group-item">
-              <div class="row">
-                <div class="col-sm-4">Epoch:</div> <div class="col-sm-8" id="epoch"></div>
-              </div>
-            </li>
-            <li class="list-group-item">
-              <div class="row">
-                <div class="col-sm-4">Perplexity:</div> <div class="col-sm-8" id="last_tick_perplexity"></div>
-              </div>
-            </li>
           </ul>
         </div>
       </div>
@@ -262,13 +262,14 @@
 
   <div class="row">
 
-  <div class="col-sm-12">
-    <div class="panel panel-default">
-      <div class="panel-heading">Sample Inspector</div>
+    <div class="col-sm-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">Sample Inspector</div>
 
-      <div class="panel-body">
-        <div id="generation_inspector"></div>
-        <div id="generation_inspector_fade_gradient"></div>
+        <div class="panel-body">
+          <div id="generation_inspector"></div>
+          <div id="generation_inspector_fade_gradient"></div>
+        </div>
       </div>
     </div>
   </div>
