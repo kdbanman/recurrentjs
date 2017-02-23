@@ -149,17 +149,8 @@ $(function () {
 
   // VISUALIZATION SLIDER DECLARATIONS
 
-  $("#diff_track_toggle").slider({
-    min: 0,
-    max: 1,
-    ticks: [0, 1],
-    step: 1,
-    value: 0,
-    formatter: function (value) {
-      return value === 1 ? "On" : "Off";
-    }
-  }).change(function (evt) {
-    weightsComponent.showDiffs = evt.target.value === "1";
+  $("#diff_track_toggle").change(function (evt) {
+    weightsComponent.showDiffs = evt.target.checked;
   });
 
   $("#diff_track_sensitivity_slider").slider({
