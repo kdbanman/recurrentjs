@@ -146,7 +146,8 @@ $(function () {
   generationComponent = new GenerationComponent({
     distributionElement: $("#hot_samples"),
     argmaxElement: $("#argmax_samples"),
-    inspectorElement: $("#generation_inspector")
+    inspectorElement: $("#generation_inspector"),
+    inspectorFader: $("#generation_inspector_fade_gradient"),
   });
 
   // VISUALIZATION SLIDER DECLARATIONS

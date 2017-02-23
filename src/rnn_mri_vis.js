@@ -167,9 +167,16 @@ WeightsComponent.prototype = {
 var GenerationComponent = function (options) {
   this.sampleCount = options.sampleCount || 8;
 
+  this.inspectorPixelSize = options.inspectorPixelSize || 15;
+  this.smallGapSize = options.smallGapSize || 5;
+  this.largeGapSize = options.largeGapSize || 25;
+
   this.distributionElement = options.distributionElement;
   this.argmaxElement = options.argmaxElement;
   this.inspectorElement = options.inspectorElement;
+  this.inspectorFader = options.inspectorFader;
+
+  this.inspectorFader.hide();
 
   for (var i = 0; i < this.sampleCount; i++) {
     var distributionSampleElement = this.newGeneratedSampleElement();
@@ -199,104 +206,96 @@ GenerationComponent.prototype = {
     var sampleElement = $.parseHTML('<li class="list-group-item generated_sample"><samp>' + sequenceString + '</samp></li>');
 
     if (networkHistory != null) {
-      var inspectorCanvas = document.createElement('canvas');
-      var ctx = inspectorCanvas.getContext("2d");
-
-      // TODO draw stuff in a different function
-
-      // lstm, vocab 29, embedding 5, layers [5,3,2]
-      // first entry in state history (there is one of these per character in output seq)
-      // console.log(JSON.stringify(networkHistory.internalStateHistory[0], null, 2));
-      // {
-      //   "h": [
-      //     {
-      //       "n": 5,
-      //       "d": 1,
-      //       "w": {
-      //         "0": 0.5610942618589108,
-      //         "1": -0.6820222024536821,
-      //         "2": -0.4386926808444987,
-      //         "3": -0.7349254714529151,
-      //         "4": 0.7602422993584501
-      //       }
-      //     },
-      //     {
-      //       "n": 3,
-      //       "d": 1,
-      //       "w": {
-      //         "0": 0.0378531568404033,
-      //         "1": -0.02357777806232938,
-      //         "2": -0.721209373708724
-      //       }
-      //     },
-      //     {
-      //       "n": 2,
-      //       "d": 1,
-      //       "w": {
-      //         "0": -0.35317488377915307,
-      //         "1": 0.725629644027298
-      //       }
-      //     }
-      //   ],
-      //   "c": [
-      //     {
-      //       "n": 5,
-      //       "d": 1,
-      //       "w": {
-      //         "0": 0.7408018117242186,
-      //         "1": -0.8747745342607464,
-      //         "2": -0.9899179752163463,
-      //         "3": -0.9889898742716635,
-      //         "4": 0.9979458607994718
-      //       }
-      //     },
-      //     {
-      //       "n": 3,
-      //       "d": 1,
-      //       "w": {
-      //         "0": 0.1904501350878244,
-      //         "1": -0.9118332318557862,
-      //         "2": -0.9102282213456858
-      //       }
-      //     },
-      //     {
-      //       "n": 2,
-      //       "d": 1,
-      //       "w": {
-      //         "0": -0.8138125096847852,
-      //         "1": 0.9195519893544033
-      //       }
-      //     }
-      //   ],
-      //   "o": {
-      //     "n": 30,
-      //     "d": 1,
-      //     "w": {
-      //       "0": -4.876805970889673,
-      //       "1": -4.779859299573517,
-      //       "2": 1.6221154954610872,
-      //       "3": 0.6534038622072965,
-      //       "4": 1.7234936184641398,
-      //       "5": -0.9242270586591919,
-      //       "6": 2.2396862196813396,
-      //       ...
-      //       "25": 1.0584809862732532,
-      //       "26": -2.9613141137751824,
-      //       "27": 0.06754429814527896,
-      //       "28": -3.1669471242723373,
-      //       "29": -0.09838809001097104
-      //     }
-      //   }
-      // }
+      var inspectorCanvas = self.renderSampleInspection(networkHistory);
 
       $(sampleElement).mouseenter(function (evt) {
         self.inspectorElement.children().remove();
         self.inspectorElement.append(inspectorCanvas);
+
+        self.inspectorFader.height(inspectorCanvas.height);
+        self.inspectorFader.show();
       });
     }
     return sampleElement;
   },
   newBlankSampleArray: function (length) {
     return Array.apply(null, Array(length)).map(function () {});
+  },
+  renderSampleInspection: function (networkHistory) {
+    var self = this;
+
+    var tmpInspectorCanvas = document.createElement('canvas');
+
+    tmpInspectorCanvas.width = 5000;
+    tmpInspectorCanvas.height = 5000;
+
+    var ctx = tmpInspectorCanvas.getContext("2d");
+
+    var currentX = 0;
+
+    var maxX = 0;
+    var maxY = 0;
+
+    // count to <= length so that the last character is rendered after the last state history entry
+    for (var stateIdx = 0; stateIdx <= networkHistory.internalStateHistory.length; stateIdx++) {
+      var currentY = 0;
+
+      if (stateIdx != 0) {
+        var character = networkHistory.sentence[stateIdx - 1];
+
+        // TODO render character
+
+        if (stateIdx == networkHistory.internalStateHistory.length) {
+          break;
+        }
+      }
+      currentY += self.inspectorPixelSize;
+      currentY += self.largeGapSize;
+
+      var internalState = networkHistory.internalStateHistory[stateIdx];
+
+      currentY = self.renderActivationLayers(internalState.h, ctx, currentX, currentY);
+
+      if (internalState.c != null) {
+        currentY = self.renderActivationLayers(internalState.c, ctx, currentX, currentY);
+      }
+
+      currentY = self.renderActivations(internalState.o.w, ctx, currentX, currentY);
+
+      currentX += self.inspectorPixelSize;
+
+      maxX = Math.max(maxX, currentX);
+      maxY = Math.max(maxY, currentY);
+    }
+
+    var inspectorCanvas = document.createElement('canvas');
+    inspectorCanvas.width = maxX + self.inspectorPixelSize;
+    inspectorCanvas.height = maxY + self.inspectorPixelSize;
+
+    var inspectorCtx = inspectorCanvas.getContext("2d");
+    inspectorCtx.drawImage(tmpInspectorCanvas, 0, 0);
+
+    return inspectorCanvas;
+  },
+  renderActivationLayers: function(layers, ctx, currentX, currentY) {
+    var self = this;
+    for (var layerIdx = 0; layerIdx < layers.length; layerIdx++) {
+      currentY = self.renderActivations(layers[layerIdx].w, ctx, currentX, currentY);
+    }
+
+    currentY += self.largeGapSize;
+    return currentY;
+  },
+  renderActivations: function (layerActivations, ctx, currentX, currentY) {
+    var self = this;
+    for (var activationIdx = 0; activationIdx < layerActivations.length; activationIdx++) {
+      ctx.fillStyle = "#" + ('00000'+(Math.random()*(1<<24)|0).toString(16)).slice(-6);
+      ctx.fillRect(currentX, currentY, self.inspectorPixelSize, self.inspectorPixelSize);
+
+      currentY += self.inspectorPixelSize;
+    }
+
+    currentY += self.smallGapSize;
+    return currentY;
   }
 }
